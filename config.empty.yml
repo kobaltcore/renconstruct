@@ -1,0 +1,22 @@
+general:
+  convert_images: true
+
+build:
+  win:
+    build: true
+    set_extended_memory_limit: true
+  mac:
+    build: true
+    notarize: true
+  android:
+    build: true
+
+renutil:
+  version: "latest"
+
+renotize:
+  apple_id: fill-this-in
+  password: fill-this-in
+  identity: fill-this-in
+  bundle: com.my-organization.my-game
+  altool_extra:
