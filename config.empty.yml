@@ -1,6 +1,6 @@
 tasks:
   set_extended_memory_limit: true
-  notarize: true
+  notarize: false
   clean: true
 
 build:
