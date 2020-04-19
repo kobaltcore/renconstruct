@@ -4,7 +4,7 @@
 
 A utility script to automatically build Ren'Py applications for multiple platforms.
 
-renConstruct can build distributions for Windows, Linux, macOs and Android, including extra processing steps pre- and post-build.
+renConstruct can build distributions for Windows, Linux, macOS and Android, including extra processing steps pre- and post-build.
 By default it supports notarization for macOS distributions and a memory limit increase for Windows distributions (using `LARGEADDRESSAWARE`).
 
 Custom pre- and post-build steps can easily be added.

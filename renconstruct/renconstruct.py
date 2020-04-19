@@ -76,7 +76,7 @@ def scan_tasks(config):
     available_tasks = {}
     for file in task_files:
         module_name = ".".join(os.path.splitext(file)[0].split(os.sep))
-        task_module = __import__(module_name)
+        task_module = __import__(module_name)  # noqa: F841
         classes = [(name, obj) for name, obj in inspect.getmembers(sys.modules[module_name], inspect.isclass)]
         for name, task_class in classes:
             if name.endswith("Task"):
@@ -95,7 +95,7 @@ def scan_tasks(config):
     for name, task_class in available_tasks.items():
         config_value = config["tasks"].get(name, False)
         if not isinstance(config_value, bool):
-            logger.error("{} must be 'True' or 'False', got {}".format(k, v))
+            logger.error("{} must be 'True' or 'False', got {}".format(name, config_value))
             sys.exit(1)
         else:
             task_class = available_tasks[name]
