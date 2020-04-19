@@ -1,15 +1,12 @@
-general:
-  convert_images: true
+tasks:
+  set_extended_memory_limit: true
+  notarize: true
+  clean: true
 
 build:
-  win:
-    build: true
-    set_extended_memory_limit: true
-  mac:
-    build: true
-    notarize: true
-  android:
-    build: true
+  win: true
+  mac: true
+  android: true
 
 renutil:
   version: "latest"
