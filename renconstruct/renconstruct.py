@@ -149,10 +149,14 @@ def validate_config(config):
 
 
 @click.command()
-@click.option("-i", "--input", "project", required=True, type=str)
-@click.option("-o", "--output", required=True, type=str)
-@click.option("-c", "--config", default="config.yaml", type=str)
-@click.option("-d", "--debug", is_flag=True)
+@click.option("-i", "--input", "project", required=True, type=str,
+              help="The path to the Ren'Py project to build")
+@click.option("-o", "--output", required=True, type=str,
+              help="The directory to output build artifacts to")
+@click.option("-c", "--config", required=True, type=str,
+              help="The configuration file for this run")
+@click.option("-d", "--debug", is_flag=True,
+              help="If given, shows debug information if")
 def cli(project, output, config, debug):
     """A utility script to automatically build Ren'Py applications for multiple platforms.
     """
