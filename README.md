@@ -21,7 +21,7 @@ Please note that renConstruct requires Python 3 and will not provide backwards c
 renConstruct operates based on the following process flow:
 - Ensure dependencies are installed
 - Validate configuration file
-- Install specific Ren'Py if necessary
+- Install specific version of Ren'Py if necessary
 - Run the `pre-build` stage of all active tasks
 - Build the Android distribution if enabled
 - Build the macOS and Windows/Linux distributions if enabled
@@ -41,7 +41,6 @@ It consists of the following sections:
 
 #### `tasks`
 - `path`: An optional path to a directory containing Python files with custom tasks
-- `convert_images`: A value of `true` or `false` determining whether to run this task or not
 - `set_extended_memory_limit`: A value of `true` or `false` determining whether to run this task or not
 - `notarize`: A value of `true` or `false` determining whether to run this task or not
 - `clean`: A value of `true` or `false` determining whether to run this task or not
