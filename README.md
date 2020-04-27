@@ -98,6 +98,32 @@ As an example, the built-in `clean` task runs at `PRIORITY = -1000` to ensure it
 renconstruct -c config.yml -i path/to/my-game/ -o out/
 ```
 
+## Using `renConstruct` with Gitlab CI
+A common use case for headless building of distributions is Continuous Integration.
+Find below an example of a GitLab CI configuration file which should work for most projects.
+
+```yaml
+# Recent experience shows that using "python:latest" can cause issues
+# because its definition may vary per runner. Always specify the exact
+# version you intend to use to avoid issues.
+image: python:3.8
+
+before_script:
+  # Downloads renconstruct through pip
+  - pip install renconstruct
+
+run:
+  script:
+    # Runs renconstruct in the project directory, saving the build outputs to a new folder called "artifacts"
+    # inside the project directory and utilises the file config.yml to specify reconstruct options.
+    - renconstruct -d -i $CI_PROJECT_DIR -o $CI_PROJECT_DIR/artifacts -c $CI_PROJECT_DIR/config.yml
+
+  artifacts:
+    paths:
+     # Saves the artifacts located in the "artifacts" folder to GitLab
+      - $CI_PROJECT_DIR/artifacts/**.*
+```
+
 ### Command Line Interface
 ```
 Usage: renconstruct.py [OPTIONS]
