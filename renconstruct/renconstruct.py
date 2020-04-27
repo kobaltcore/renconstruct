@@ -7,6 +7,7 @@ import logging
 import inspect
 from glob import glob
 from subprocess import run, Popen, PIPE, STDOUT
+from importlib import import_module, invalidate_caches
 
 ### Logging ###
 import logzero
@@ -77,24 +78,20 @@ def scan_tasks(config):
                   for file in glob(os.path.join(tmp_dir, "**", "*.py"), recursive=True)]
     logger.debug("Found task files: {}".format(task_files))
 
-    logger.debug("Inserting into sys.path: {}".format(os.path.abspath(os.path.dirname(os.path.dirname(tmp_dir)))))
-    sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(tmp_dir))))
+    invalidate_caches()
 
     available_tasks = {}
     for file in task_files:
         name = os.path.splitext(file)[0].split(os.sep)
         logger.debug("Got task file {} - {}".format(file, name))
-        if name == "renconstruct_tasklib":
-            logger.warning("Encountered strange task lib path: {}".format(file))
-            continue
         try:
             module_name = "renconstruct." + ".".join(name)
             logger.debug("Trying to load {}".format(module_name))
-            task_module = __import__(module_name)  # noqa: F841
+            task_module = import_module(module_name)  # noqa: F841
         except:  # noqa: E722
             module_name = ".".join(name)
             logger.debug("Trying to load fallback {}".format(module_name))
-            task_module = __import__(module_name)  # noqa: F841
+            task_module = import_module(module_name)  # noqa: F841
         classes = [(name, obj) for name, obj in inspect.getmembers(sys.modules[module_name], inspect.isclass)]
         for name, task_class in classes:
             if name.endswith("Task"):
