@@ -75,8 +75,12 @@ def scan_tasks(config):
 
     available_tasks = {}
     for file in task_files:
-        module_name = ".".join(os.path.splitext(file)[0].split(os.sep))
-        task_module = __import__(module_name)  # noqa: F841
+        try:
+            module_name = "renconstruct." + ".".join(os.path.splitext(file)[0].split(os.sep))
+            task_module = __import__(module_name)  # noqa: F841
+        except:  # noqa: E722
+            module_name = ".".join(os.path.splitext(file)[0].split(os.sep))
+            task_module = __import__(module_name)  # noqa: F841
         classes = [(name, obj) for name, obj in inspect.getmembers(sys.modules[module_name], inspect.isclass)]
         for name, task_class in classes:
             if name.endswith("Task"):
