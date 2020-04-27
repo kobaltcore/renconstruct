@@ -317,7 +317,7 @@ description = "A toolkit for managing Ren'Py instances via the command line"
 name = "renutil"
 optional = false
 python-versions = ">=3.5,<4.0"
-version = "1.8.0"
+version = "1.8.1"
 
 [package.dependencies]
 click = ">=7.1.1,<8.0.0"
@@ -415,7 +415,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["pathlib2", "unittest2", "jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "d02a505863d41b6785ac188c393c454c9a5cd23ad5fcf277a4b23549f1373a88"
+content-hash = "dcd0268d3a354206f65214b4095d554f0496cce56cc9a012adb2ebfdd06b0407"
 python-versions = "^3.5"
 
 [metadata.files]
@@ -595,8 +595,8 @@ renotize = [
     {file = "renotize-1.0.2.tar.gz", hash = "sha256:99a9279004d72983605a599b75bcb18d77928a7a3c8cf63a33eb97aca44f1c52"},
 ]
 renutil = [
-    {file = "renutil-1.8.0-py3-none-any.whl", hash = "sha256:b375627e720c553f269afeb409713f469b071511c97581c1552ab201de578bcd"},
-    {file = "renutil-1.8.0.tar.gz", hash = "sha256:fa93717c795956ec2fb97b58998895c12ef731f72c2d6c627bbec30dac0a2b81"},
+    {file = "renutil-1.8.1-py3-none-any.whl", hash = "sha256:81d0ab44e079c70deac9cec935ac8da55e410b2a918d54f65c5e81d1cc9db821"},
+    {file = "renutil-1.8.1.tar.gz", hash = "sha256:7f1cd8fbac49efe6abdb2f2a40271b67c17c845fd3a80c11993e3f06f34ac951"},
 ]
 requests = [
     {file = "requests-2.23.0-py2.py3-none-any.whl", hash = "sha256:43999036bfa82904b6af1d99e4882b560e5e2c68e5c4b0aa03b655f3d7d73fee"},
