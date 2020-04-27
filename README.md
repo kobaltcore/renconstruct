@@ -108,6 +108,14 @@ Find below an example of a GitLab CI configuration file which should work for mo
 # version you intend to use to avoid issues.
 image: python:3.8
 
+variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
 before_script:
   # Downloads renconstruct through pip
   - pip install renconstruct
