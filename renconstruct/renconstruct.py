@@ -77,12 +77,13 @@ def scan_tasks(config):
                   for file in glob(os.path.join(tmp_dir, "**", "*.py"), recursive=True)]
     logger.debug("Found task files: {}".format(task_files))
 
-    logger.debug("Inserting into sys.path: {}".format(os.path.abspath(os.path.dirname(tmp_dir))))
-    sys.path.insert(0, os.path.abspath(os.path.dirname(tmp_dir)))
+    logger.debug("Inserting into sys.path: {}".format(os.path.abspath(os.path.dirname(os.path.dirname(tmp_dir)))))
+    sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(tmp_dir))))
 
     available_tasks = {}
     for file in task_files:
         name = os.path.splitext(file)[0].split(os.sep)
+        logger.debug("Got task file {} - {}".format(file, name))
         if name == "renconstruct_tasklib":
             logger.warning("Encountered strange task lib path: {}".format(file))
             continue
