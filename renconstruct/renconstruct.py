@@ -65,14 +65,20 @@ def scan_tasks(config):
         task_files += glob(os.path.join(config["tasks"]["path"], "**", "*.py"), recursive=True)
 
     tmp_dir = os.path.join(os.path.dirname(__file__), "renconstruct_tasklib")
+    logger.debug("Temporary task directory (rel): {}".format(tmp_dir))
+    logger.debug("Temporary task directory (abs): {}".format(os.path.abspath(tmp_dir)))
     if os.path.isdir(tmp_dir):
         shutil.rmtree(tmp_dir)
     os.makedirs(tmp_dir, exist_ok=True)
     for file in task_files:
         shutil.copyfile(file, os.path.join(tmp_dir, os.path.basename(file)))
+        logger.debug("Copying task {} to {}".format(file, os.path.join(tmp_dir, os.path.basename(file))))
     task_files = [os.path.join("renconstruct_tasklib", os.path.basename(file))
                   for file in glob(os.path.join(tmp_dir, "**", "*.py"), recursive=True)]
     logger.debug("Found task files: {}".format(task_files))
+
+    logger.debug("Inserting into sys.path: {}".format(os.path.abspath(os.path.dirname(tmp_dir))))
+    sys.path.insert(0, os.path.abspath(os.path.dirname(tmp_dir)))
 
     available_tasks = {}
     for file in task_files:
