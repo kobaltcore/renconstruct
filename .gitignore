@@ -1,8 +1,10 @@
 out/
 tasklib/
+renconstruct_tasklib/
 custom-tasks/
 config.prod.yml
 config.prod.yaml
+entitlements.plist
 
 # Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python

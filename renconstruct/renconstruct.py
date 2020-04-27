@@ -64,28 +64,38 @@ def scan_tasks(config):
         logger.debug("Using tasks from {}".format(config["tasks"]["path"]))
         task_files += glob(os.path.join(config["tasks"]["path"], "**", "*.py"), recursive=True)
 
-    tmp_dir = os.path.join(os.path.dirname(__file__), "tasklib")
+    tmp_dir = os.path.join(os.path.dirname(__file__), "renconstruct_tasklib")
     if os.path.isdir(tmp_dir):
         shutil.rmtree(tmp_dir)
     os.makedirs(tmp_dir, exist_ok=True)
     for file in task_files:
         shutil.copyfile(file, os.path.join(tmp_dir, os.path.basename(file)))
-    task_files = [os.path.join("tasklib", os.path.basename(file))
+    task_files = [os.path.join("renconstruct_tasklib", os.path.basename(file))
                   for file in glob(os.path.join(tmp_dir, "**", "*.py"), recursive=True)]
+    logger.debug("Found task files: {}".format(task_files))
 
     available_tasks = {}
     for file in task_files:
+        name = os.path.splitext(file)[0].split(os.sep)
+        if name == "renconstruct_tasklib":
+            logger.warning("Encountered strange task lib path: {}".format(file))
+            continue
         try:
-            module_name = "renconstruct." + ".".join(os.path.splitext(file)[0].split(os.sep))
+            module_name = "renconstruct." + ".".join(name)
+            logger.debug("Trying to load {}".format(module_name))
             task_module = __import__(module_name)  # noqa: F841
         except:  # noqa: E722
-            module_name = ".".join(os.path.splitext(file)[0].split(os.sep))
+            module_name = ".".join(name)
+            logger.debug("Trying to load fallback {}".format(module_name))
             task_module = __import__(module_name)  # noqa: F841
         classes = [(name, obj) for name, obj in inspect.getmembers(sys.modules[module_name], inspect.isclass)]
         for name, task_class in classes:
             if name.endswith("Task"):
                 new_name = "_".join([item.lower() for item in re.split(r"(?=[A-Z])", name[:-4]) if item])
                 available_tasks[new_name] = task_class
+
+    if not available_tasks:
+        logger.warn("Did not find any tasks, something is likely off with the task library location")
 
     available_task_names = set(available_tasks.keys())
     defined_task_names = set([item for item in config["tasks"].keys() if item != "path"])
