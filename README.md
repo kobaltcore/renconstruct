@@ -85,6 +85,7 @@ As an example, the built-in `clean` task runs at `PRIORITY = -1000` to ensure it
 
 #### `renutil`
 - `version`: The version of Ren'Py to use while building the distributions
+- `registry`: A path where `renutil` data is stored. Mostly useful for CI environments
 
 #### `renotize`
 - `apple_id`: The e-Mail address belonging to the Apple ID you want to use for signing applications.

@@ -10,6 +10,7 @@ build:
 
 renutil:
   version: "latest"
+  registry: "cache"
 
 renotize:
   apple_id: fill-this-in

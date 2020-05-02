@@ -146,6 +146,8 @@ def validate_config(config):
         config["renutil"] = {"version": "latest"}
     if config["renutil"].get("version", None) is None:
         config["renutil"]["version"] = "latest"
+    if config["renutil"].get("registry", None) is None:
+        config["renutil"]["registry"] = None
 
     if config.get("renotize", None) is None:
         config["renotize"] = {}
@@ -216,27 +218,33 @@ def cli(project, output, config, debug):
         logger.error("Please install 'renotize' before continuing!")
         sys.exit(1)
 
+    registry_cmd = ""
+    if config["renutil"]["registry"]:
+        registry_cmd = "-r '{}'".format(config["renutil"]["registry"])
+
     logger.info("Checking available Ren'Py versions")
-    p = run("renutil list", capture_output=True, shell=True)
+    p = run("renutil {} list".format(registry_cmd), capture_output=True, shell=True)
     available_versions = [item.strip() for item in p.stdout.decode("utf-8").split("\n")]
 
     if config["renutil"]["version"] == "latest":
-        p = run("renutil list --all", capture_output=True, shell=True)
+        p = run("renutil {} list --all".format(registry_cmd), capture_output=True, shell=True)
         chosen_version = [item.strip() for item in p.stdout.decode("utf-8").split("\n")][0]
         config["renutil"]["version"] = chosen_version
 
     if config["renutil"]["version"] not in available_versions:
         logger.warning("Ren'Py {} is not installed, installing now...".format(config["renutil"]["version"]))
-        p = run("renutil install {}".format(config["renutil"]["version"]), shell=True)
+        p = run("renutil {} install {}".format(registry_cmd, config["renutil"]["version"]), shell=True)
 
     if runnable_tasks:
         run_tasks(config, runnable_tasks, stage="pre-build")
 
     if config["build"]["android"]:
         logger.info("Building Android package")
-        cmd = "renutil launch {} android_build {} assembleRelease --destination {}".format(config["renutil"]["version"],
-                                                                                           config["project"],
-                                                                                           config["output"])
+        cmd = "renutil {} launch {} android_build \
+        {} assembleRelease --destination {}".format(registry_cmd,
+                                                    config["renutil"]["version"],
+                                                    config["project"],
+                                                    config["output"])
         proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
         for line in proc.stdout:
             line = str(line.strip(), "utf-8")
@@ -253,9 +261,11 @@ def cli(project, output, config, debug):
     elif len(platforms_to_build) > 1:
         logger.info("Building {} packages".format(", ".join(platforms_to_build)))
     if platforms_to_build:
-        cmd = "renutil launch {} distribute {} --destination {}".format(config["renutil"]["version"],
-                                                                        config["project"],
-                                                                        config["output"])
+        cmd = "renutil {} launch {} distribute \
+        {} --destination {}".format(registry_cmd,
+                                    config["renutil"]["version"],
+                                    config["project"],
+                                    config["output"])
         for package in platforms_to_build:
             cmd += " --package {}".format(package)
         proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
