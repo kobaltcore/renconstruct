@@ -41,7 +41,7 @@ def run_tasks(config, tasks, stage="pre-build"):
     logger.info("Running stage '{}' for active tasks".format(stage))
     for name, task_class, priority in tasks:
         try:
-            task = task_class(config)
+            task = task_class(name, config)
         except Exception as e:
             logger.error("Task {} failed to initialize:".format(name))
             logger.error(e)
@@ -118,6 +118,14 @@ def scan_tasks(config):
         else:
             task_class = available_tasks[name]
             new_tasks[name] = (config_value, task_class)
+        if hasattr(task_class, "validate_config"):
+            try:
+                task_config = task_class.validate_config(config.get(name, {}))
+                config[name] = task_config
+            except Exception as e:
+                logger.error("Task {} failed to validate its config section:".format(name))
+                logger.error(e)
+                sys.exit(1)
 
     runnable_tasks = []
     logger.info("Loaded tasks:")

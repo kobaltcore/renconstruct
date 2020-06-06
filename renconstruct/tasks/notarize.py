@@ -16,7 +16,8 @@ class NotarizeTask():
     # This is relative to all other enabled tasks
     PRIORITY = 0
 
-    def __init__(self, config):
+    def __init__(self, name, config):
+        self.name = name
         self.config = config
 
     def post_build(self):

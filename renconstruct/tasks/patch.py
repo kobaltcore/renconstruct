@@ -1,0 +1,80 @@
+### System ###
+import os
+from glob import glob
+from shutil import copyfile
+from subprocess import Popen, PIPE, STDOUT
+
+### Logging ###
+from logzero import logger
+
+### Parsing ###
+import yaml
+
+### Diffing ###
+from diff_match_patch import diff_match_patch
+
+
+class PatchTask():
+
+    # The higher priority, the earlier the task runs
+    # This is relative to all other enabled tasks
+    PRIORITY = 1000
+
+    def __init__(self, name, config):
+        self.name = name
+        self.config = config
+
+    @staticmethod
+    def validate_config(config):
+        if config.get("path", None) is None:
+            raise Exception("Field 'path' missing")
+        else:
+            if not os.path.isdir(config["path"]):
+                raise Exception("Directory '{}' does not exist".format(config["path"]))
+            config["path"] = os.path.abspath(os.path.expanduser(config["path"]))
+
+        return config
+
+    def pre_build(self):
+        patch_files = glob(os.path.join(self.config[name]["path"], "**", "*.patch"), recursive=True)
+
+        errors = set()
+        dmp = diff_match_patch()
+        for patch_file in patch_files:
+            with open(patch_file, "r") as f:
+                patch_text = f.read()
+
+            try:
+                patches = dmp.patch_fromText(patch_text)
+            except:
+                logger.warning("Failed to parse patch file {}".format(patch_file))
+                errors.add(patch_file)
+                continue
+
+            rel_path = os.path.relpath(patch_file, start=config[self.name]["path"])
+            target_file = os.path.join(renpy_dir, relpath)
+            backup_file = "{}.original".format(target_file)
+
+            with open(target_file, "r") as f:
+                target_text = f.read()
+
+            try:
+                patched_text, hunk_success = dmp.patch_apply(patches, target_text)
+            except:
+                logger.warning("Failed to apply patch to file {}".format(target_file))
+                errors.add(patch_file)
+                continue
+
+            copyfile(target_file, backup_file)
+
+            with open(target_file, "w") as f:
+                f.write(patched_text)
+
+    if errors:
+        for patch_file in patch_files:
+            rel_path = os.path.relpath(patch_file, start=config[self.name]["path"])
+            target_file = os.path.join(renpy_dir, relpath)
+            backup_file = "{}.original".format(target_file)
+            os.remove(target_file)
+            os.rename(backup_file, target_file)
+        raise Exception("Some errors occured while patching Ren'Py, rolled back all changes")

@@ -55,8 +55,13 @@ class DoSomethingTask():
 
     PRIORITY = -100
 
-    def __init__(self, config):
+    def __init__(self, name, config):
+        self.name = name
         self.config = config
+
+    @staticmethod
+    def validate_config(config):
+        pass
 
     def pre_build(self):
         pass
@@ -68,6 +73,9 @@ class DoSomethingTask():
 The name of the class must end with `Task` for it to be picked up by renConstruct.
 Every custom task will automatically receive a setting in the config file based on the class name split on uppercase letters, converted to lowercase and joined by underscores.
 The example task above would receive the config variable `do_something`.
+
+A task can have a custom section in the config file. To support this, each task class can have an optional static method `validate_config`, which is passed the subsection of the config object pertaining to that task. It can then validate this config object in any way it sees fit, raising an Exception when an issue occurs.
+The parsed config subsection is then integrated into the full config object, which is then passed back to the task upon initialization.
 
 A task can have two methods `pre_build` and `post_build` (either or both is possible).
 They will be called with the validated config object at the specified build stage.

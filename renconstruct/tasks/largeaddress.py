@@ -98,7 +98,8 @@ class SetExtendedMemoryLimitTask():
     # This is relative to all other enabled tasks
     PRIORITY = 0
 
-    def __init__(self, config):
+    def __init__(self, name, config):
+        self.name = name
         self.config = config
 
     def set_large_address_aware(self, filename):

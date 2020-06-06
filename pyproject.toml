@@ -20,6 +20,7 @@ tqdm = "^4.46.0"
 termcolor = "^1.1.0"
 renutil = "^1.9.1"
 renotize = "^1.0.2"
+diff-match-patch = "^20181111"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.7"

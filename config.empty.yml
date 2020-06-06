@@ -2,6 +2,10 @@ tasks:
   set_extended_memory_limit: true
   notarize: false
   clean: true
+  patch: false
+
+patch:
+  path: "~/renpy-patches"
 
 build:
   win: true
