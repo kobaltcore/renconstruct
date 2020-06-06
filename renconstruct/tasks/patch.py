@@ -2,13 +2,9 @@
 import os
 from glob import glob
 from shutil import copyfile
-from subprocess import Popen, PIPE, STDOUT
 
 ### Logging ###
 from logzero import logger
-
-### Parsing ###
-import yaml
 
 ### Diffing ###
 from diff_match_patch import diff_match_patch
@@ -36,7 +32,10 @@ class PatchTask():
         return config
 
     def pre_build(self):
-        patch_files = glob(os.path.join(self.config[name]["path"], "**", "*.patch"), recursive=True)
+        patch_files = glob(os.path.join(self.config[self.name]["path"], "**", "*.patch"), recursive=True)
+
+        # TODO: Obtain Ren'Py installation directory somehow
+        renpy_dir = "TODO"
 
         errors = set()
         dmp = diff_match_patch()
@@ -46,13 +45,14 @@ class PatchTask():
 
             try:
                 patches = dmp.patch_fromText(patch_text)
-            except:
-                logger.warning("Failed to parse patch file {}".format(patch_file))
+            except Exception as e:
+                logger.error("Failed to parse patch file {}".format(patch_file))
+                logger.error(e)
                 errors.add(patch_file)
                 continue
 
-            rel_path = os.path.relpath(patch_file, start=config[self.name]["path"])
-            target_file = os.path.join(renpy_dir, relpath)
+            rel_path = os.path.relpath(patch_file, start=self.config[self.name]["path"])
+            target_file = os.path.join(renpy_dir, rel_path)
             backup_file = "{}.original".format(target_file)
 
             with open(target_file, "r") as f:
@@ -60,8 +60,9 @@ class PatchTask():
 
             try:
                 patched_text, hunk_success = dmp.patch_apply(patches, target_text)
-            except:
-                logger.warning("Failed to apply patch to file {}".format(target_file))
+            except Exception as e:
+                logger.error("Failed to apply patch to file {}".format(target_file))
+                logger.error(e)
                 errors.add(patch_file)
                 continue
 
@@ -70,11 +71,11 @@ class PatchTask():
             with open(target_file, "w") as f:
                 f.write(patched_text)
 
-    if errors:
-        for patch_file in patch_files:
-            rel_path = os.path.relpath(patch_file, start=config[self.name]["path"])
-            target_file = os.path.join(renpy_dir, relpath)
-            backup_file = "{}.original".format(target_file)
-            os.remove(target_file)
-            os.rename(backup_file, target_file)
-        raise Exception("Some errors occured while patching Ren'Py, rolled back all changes")
+        if errors:
+            for patch_file in patch_files:
+                rel_path = os.path.relpath(patch_file, start=self.config[self.name]["path"])
+                target_file = os.path.join(renpy_dir, rel_path)
+                backup_file = "{}.original".format(target_file)
+                os.remove(target_file)
+                os.rename(backup_file, target_file)
+            raise Exception("Some errors occured while patching Ren'Py, rolled back all changes")
