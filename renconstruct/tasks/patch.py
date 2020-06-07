@@ -32,7 +32,9 @@ class PatchTask():
         return config
 
     def pre_build(self):
-        patch_files = glob(os.path.join(self.config[self.name]["path"], "**", "*.patch"), recursive=True)
+        patch_files = glob(os.path.join(self.config[self.name]["path"], "**", "*.*"), recursive=True)
+        amount = len(patch_files)
+        logger.debug("Found {} patch file{}.".format(amount, "s" if amount > 1 else ""))
 
         errors = set()
         dmp = diff_match_patch()
@@ -63,7 +65,8 @@ class PatchTask():
                 errors.add(patch_file)
                 continue
 
-            copyfile(target_file, backup_file)
+            if not os.path.isfile(backup_file):
+                copyfile(target_file, backup_file)
 
             with open(target_file, "w") as f:
                 f.write(patched_text)

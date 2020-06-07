@@ -18,7 +18,7 @@ pyyaml = "^5.3.1"
 logzero = "^1.5.0"
 tqdm = "^4.46.1"
 termcolor = "^1.1.0"
-renutil = "^1.9.1"
+renutil = "^1.10.0"
 renotize = "^1.0.2"
 diff-match-patch = "^20181111"
 

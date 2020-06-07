@@ -5,7 +5,7 @@ tasks:
   patch: false
 
 patch:
-  path: "~/renpy-patches"
+  path: "renpy-patches"
 
 build:
   win: true

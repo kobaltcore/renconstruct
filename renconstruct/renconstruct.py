@@ -232,7 +232,7 @@ def cli(project, output, config, debug):
 
     logger.info("Checking available Ren'Py versions")
     p = run("renutil {} list".format(registry_cmd), capture_output=True, shell=True)
-    available_versions = [item.strip() for item in p.stdout.decode("utf-8").split("\n")]
+    available_versions = [item.strip() for item in p.stdout.decode("utf-8").split("\n") if item.strip()]
 
     if config["renutil"]["version"] == "latest":
         p = run("renutil {} list --all".format(registry_cmd), capture_output=True, shell=True)
@@ -243,7 +243,7 @@ def cli(project, output, config, debug):
         logger.warning("Ren'Py {} is not installed, installing now...".format(config["renutil"]["version"]))
         p = run("renutil {} install {}".format(registry_cmd, config["renutil"]["version"]), shell=True)
 
-    p = run("renutil {} show {}".format(registry_cmd, config["renutil"["version"]]), capture_output=True, shell=True)
+    p = run("renutil {} show {}".format(registry_cmd, config["renutil"]["version"]), capture_output=True, shell=True)
     output = p.stdout.decode("utf-8").split("\n")
     config["renutil"]["path"] = [item.strip() for item in output][1].lstrip("Install Location:").strip()
 
