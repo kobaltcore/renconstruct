@@ -243,6 +243,10 @@ def cli(project, output, config, debug):
         logger.warning("Ren'Py {} is not installed, installing now...".format(config["renutil"]["version"]))
         p = run("renutil {} install {}".format(registry_cmd, config["renutil"]["version"]), shell=True)
 
+    p = run("renutil {} show {}".format(registry_cmd, config["renutil"["version"]]), capture_output=True, shell=True)
+    output = p.stdout.decode("utf-8").split("\n")
+    config["renutil"]["path"] = [item.strip() for item in output][1].lstrip("Install Location:").strip()
+
     if runnable_tasks:
         run_tasks(config, runnable_tasks, stage="pre-build")
 

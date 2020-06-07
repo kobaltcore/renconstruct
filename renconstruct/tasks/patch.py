@@ -34,9 +34,6 @@ class PatchTask():
     def pre_build(self):
         patch_files = glob(os.path.join(self.config[self.name]["path"], "**", "*.patch"), recursive=True)
 
-        # TODO: Obtain Ren'Py installation directory somehow
-        renpy_dir = "TODO"
-
         errors = set()
         dmp = diff_match_patch()
         for patch_file in patch_files:
@@ -52,7 +49,7 @@ class PatchTask():
                 continue
 
             rel_path = os.path.relpath(patch_file, start=self.config[self.name]["path"])
-            target_file = os.path.join(renpy_dir, rel_path)
+            target_file = os.path.join(self.config["renutil"]["path"], rel_path)
             backup_file = "{}.original".format(target_file)
 
             with open(target_file, "r") as f:
@@ -74,7 +71,7 @@ class PatchTask():
         if errors:
             for patch_file in patch_files:
                 rel_path = os.path.relpath(patch_file, start=self.config[self.name]["path"])
-                target_file = os.path.join(renpy_dir, rel_path)
+                target_file = os.path.join(self.config["renutil"]["path"], rel_path)
                 backup_file = "{}.original".format(target_file)
                 os.remove(target_file)
                 os.rename(backup_file, target_file)
