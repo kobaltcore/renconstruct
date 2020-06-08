@@ -65,7 +65,10 @@ class PatchTask():
                 errors.add(patch_file)
                 continue
 
-            if not os.path.isfile(backup_file):
+            if os.path.isfile(backup_file):
+                os.remove(target_file)
+                copyfile(backup_file, target_file)
+            else:
                 copyfile(target_file, backup_file)
 
             with open(target_file, "w") as f:
