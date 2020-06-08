@@ -44,8 +44,54 @@ It consists of the following sections:
 - `set_extended_memory_limit`: A value of `true` or `false` determining whether to run this task or not
 - `notarize`: A value of `true` or `false` determining whether to run this task or not
 - `clean`: A value of `true` or `false` determining whether to run this task or not
+- `patch`: A value of `true` or `false` determining whether to run this task or not
 
-##### Custom Tasks
+#### `build`
+- `win`: A value of `true` or `false` determining whether to build the Windows/Linux distribution or not
+- `mac`: A value of `true` or `false` determining whether to build the macOS distribution or not
+- `android`: A value of `true` or `false` determining whether to build the Android distribution or not
+
+
+#### `renutil`
+- `version`: The version of Ren'Py to use while building the distributions
+- `registry`: A path where `renutil` data is stored. Mostly useful for CI environments
+
+#### `renotize`
+- `apple_id`: The e-Mail address belonging to the Apple ID you want to use for signing applications.
+- `password`: An app-specific password generated through the [management portal](https://appleid.apple.com/account/manage) of your Apple ID.
+- `identity`: The identity associated with your Developer Certificate which can be found in `Keychain Access` under the category "My Certificates". It starts with `Developer ID Application:`, however it suffices to provide the 10-character code in the title of the certificate.
+- `bundle`: The internal name for your app. This is typically the reverse domain notation of your website plus your application name, i.e. `com.example.mygame`.
+- `altool_extra`: An optional string that will be passed on to all `altool` runs in all commands. Useful for selecting an organization when your Apple ID belongs to multiple, for example. Typically you will not have to touch this and you can leave it empty.
+
+### Default Tasks
+renConstruct ships with several built-in tasks that enable project-independent functionality.
+
+#### `Clean`
+This task runs as the last task in the `post-build` stage. Its purpose is to remove unnecessary artifacts and temporary build data. It achieves this by running `renutil clean`, which will remove all temporary build artifacts from the Ren'Py instance used to build the project. In addition it removes non-universal APK artifacts from the output folder.
+
+Given that the universal APK's are only a few Megabytes larger and more widely compatible, the author opines that shipping the universal versions is preferable in all cases.
+
+#### `Notarize`
+This task runs in the `post-build` stage and utilizes the `renotize` utility to automatically notarize the macOS build of the project, if it was generated. The process is entirely automatic, though it may take a few minutes depending on the size of the game and the load on Apple's notarization servers.
+
+#### `Set Extended Memory Limit`
+This task runs in the `post-build` stage and operates on the Windows build of the project, if it was generated. Specifically, it modifies the executable file by setting the `LARGEADDRESSAWARE` flag in the header of the file, which enables the final build to access 4GB of RAM on Windows, instead of the typical 2GB when running in regular 32-Bit mode.
+
+Given that Ren'Py already supports 64-Bit operation under Linux and macOS (and through personal experience deploying thusly modified games), this option should be safe to use in effectively all cases.
+
+#### `Patch`
+This task runs early in the `pre-build` stage and is capable of applying patch files (code diffs) to Python files of the Ren'Py instance that will be used to build the project. This allows for automatic application of game-specific patches before building, enabling customization at the engine level.
+
+It is important to note that renConstruct does *not* build or rebuild Ren'Py after these patches are applied. As such it is only possible to patch runtime files, which effectively boils down to the pure-Python parts of Ren'Py. Patching the compiled parts is not supported and actively discouraged.
+
+The task works by looking at a directory of patch files (specified in the configuration file) and applying them to equally-named files in the directory of the Ren'Py instance. For this to work, the structure of the patch directory must exactly mirror that of the paths to the actual file to patch, relative to the instance directory.
+
+For example, if you wanted to patch the file `renpy/display/presplash.py` you would generated a patch file and name it `presplash.py`. After that you would put it into the directory `patches/renpy/display/presplash.py`.
+Patch files are expected to match the `diff-match-patch` format for diffs. These types of files can be easily generated using the [`diffusor`](https://github.com/kobaltcore/diffusor) command-line utility.
+
+renConstruct will automatically figure out the actual file to apply it to, as well as create a backup of the original file. If any part of the patching process files, all changes are rolled back. it is also guaranteed that a file will only ever be patched once. Even if a file has been patched before and the patch file has changed, the new patch will be reliably applied to the original, unmodified file and the currently modified version will be replaced by the new version.
+
+### Custom Tasks
 Custom tasks can easily be added using the `path` value. It should point to a directory containing Python files.
 Each file can contain one or more task, which will be picked up by renConstruct.
 
@@ -84,23 +130,6 @@ At that point they can do whatever they want. As an example, a custom task could
 Each task also has a `PRIORITY` class attribute which has a default value of `0` and determines the order in which to run the tasks. A higher priority means that task will be executed earlier than others with a lower value. Both positive and negative values are possible.
 
 As an example, the built-in `clean` task runs at `PRIORITY = -1000` to ensure it's always the last task to be run.
-
-#### `build`
-- `win`: A value of `true` or `false` determining whether to build the Windows/Linux distribution or not
-- `mac`: A value of `true` or `false` determining whether to build the macOS distribution or not
-- `android`: A value of `true` or `false` determining whether to build the Android distribution or not
-
-
-#### `renutil`
-- `version`: The version of Ren'Py to use while building the distributions
-- `registry`: A path where `renutil` data is stored. Mostly useful for CI environments
-
-#### `renotize`
-- `apple_id`: The e-Mail address belonging to the Apple ID you want to use for signing applications.
-- `password`: An app-specific password generated through the [management portal](https://appleid.apple.com/account/manage) of your Apple ID.
-- `identity`: The identity associated with your Developer Certificate which can be found in `Keychain Access` under the category "My Certificates". It starts with `Developer ID Application:`, however it suffices to provide the 10-character code in the title of the certificate.
-- `bundle`: The internal name for your app. This is typically the reverse domain notation of your website plus your application name, i.e. `com.example.mygame`.
-- `altool_extra`: An optional string that will be passed on to all `altool` runs in all commands. Useful for selecting an organization when your Apple ID belongs to multiple, for example. Typically you will not have to touch this and you can leave it empty.
 
 ### Example
 ```bash
