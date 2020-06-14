@@ -305,14 +305,14 @@ description = "A utility script for quickly and automatically notarizing Ren'Py 
 name = "renotize"
 optional = false
 python-versions = ">=3.5,<4.0"
-version = "1.0.2"
+version = "1.1.0"
 
 [package.dependencies]
-arrow = ">=0.15.5,<0.16.0"
-click = ">=7.1.1,<8.0.0"
+arrow = ">=0.15.6,<0.16.0"
+click = ">=7.1.2,<8.0.0"
 logzero = ">=1.5.0,<2.0.0"
 pyyaml = ">=5.3.1,<6.0.0"
-tqdm = ">=4.45.0,<5.0.0"
+tqdm = ">=4.46.1,<5.0.0"
 
 [[package]]
 category = "main"
@@ -320,7 +320,7 @@ description = "A toolkit for managing Ren'Py instances via the command line"
 name = "renutil"
 optional = false
 python-versions = ">=3.5,<4.0"
-version = "1.10.0"
+version = "1.11.0"
 
 [package.dependencies]
 click = ">=7.1.2,<8.0.0"
@@ -418,7 +418,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["pathlib2", "unittest2", "jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "38085f2cdec61faf35cd46f55e2122ed5e4f6267e7df4129a8189d1af4fe60f5"
+content-hash = "f20895a2eb00bbd85aac398eb7551ab7e6c2724d6f4262b95b50e5a5975b2261"
 python-versions = "^3.5"
 
 [metadata.files]
@@ -594,12 +594,12 @@ pyyaml = [
     {file = "PyYAML-5.3.1.tar.gz", hash = "sha256:b8eac752c5e14d3eca0e6dd9199cd627518cb5ec06add0de9d32baeee6fe645d"},
 ]
 renotize = [
-    {file = "renotize-1.0.2-py3-none-any.whl", hash = "sha256:f4b6497c4c6421aa0712d9b82057919de2af2ea26cb0fe7d0e7ae9a29066db9d"},
-    {file = "renotize-1.0.2.tar.gz", hash = "sha256:99a9279004d72983605a599b75bcb18d77928a7a3c8cf63a33eb97aca44f1c52"},
+    {file = "renotize-1.1.0-py3-none-any.whl", hash = "sha256:e57f10e6f800818dbfd8a5d1f2193a3ab3e4268b8b4b683e0795f0e4cea3a544"},
+    {file = "renotize-1.1.0.tar.gz", hash = "sha256:1b664a183ff8b2242ff9414e871bf9e2e791f6aa8aa773d775eac891c8501c12"},
 ]
 renutil = [
-    {file = "renutil-1.10.0-py3-none-any.whl", hash = "sha256:a606fa173722ebb02ccf5837b65afc81880f266a7b1b480717e3a9e75205466f"},
-    {file = "renutil-1.10.0.tar.gz", hash = "sha256:3ad61b7e0785e502f14741d6e52af3df7202c0d9e4c611cec8691b577ffacfad"},
+    {file = "renutil-1.11.0-py3-none-any.whl", hash = "sha256:384cbcdd4e6405ca15a0e8eca4b9a6eed56dc4c40afd5d70d1b94cbe5a681d97"},
+    {file = "renutil-1.11.0.tar.gz", hash = "sha256:091c135f3be6f7225cf3e29ca6094e6939e60d87e3f0f997e073c7e5370492c1"},
 ]
 requests = [
     {file = "requests-2.23.0-py2.py3-none-any.whl", hash = "sha256:43999036bfa82904b6af1d99e4882b560e5e2c68e5c4b0aa03b655f3d7d73fee"},
