@@ -54,6 +54,13 @@ class PatchTask():
             target_file = os.path.join(self.config["renutil"]["path"], rel_path)
             backup_file = "{}.original".format(target_file)
 
+            if os.path.isfile(backup_file):
+                logger.debug("Original file found, replacing current version with original before patching")
+                os.remove(target_file)
+                copyfile(backup_file, target_file)
+            else:
+                copyfile(target_file, backup_file)
+
             with open(target_file, "r") as f:
                 target_text = f.read()
 
@@ -64,12 +71,6 @@ class PatchTask():
                 logger.error(e)
                 errors.add(patch_file)
                 continue
-
-            if os.path.isfile(backup_file):
-                os.remove(target_file)
-                copyfile(backup_file, target_file)
-            else:
-                copyfile(target_file, backup_file)
 
             with open(target_file, "w") as f:
                 f.write(patched_text)
