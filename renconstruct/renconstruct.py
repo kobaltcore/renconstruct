@@ -118,20 +118,20 @@ def scan_tasks(config):
         else:
             task_class = available_tasks[name]
             new_tasks[name] = (config_value, task_class)
-        if hasattr(task_class, "validate_config"):
-            try:
-                task_config = task_class.validate_config(config.get(name, {}))
-                config[name] = task_config
-            except Exception as e:
-                logger.error("Task {} failed to validate its config section:".format(name))
-                logger.error(e)
-                sys.exit(1)
 
     runnable_tasks = []
     logger.info("Loaded tasks:")
     for name, (enabled, task_class) in new_tasks.items():
         logger.info("{} {}".format(colored("\u2714", "green") if enabled else colored("\u2718", "red"), name))
         if enabled:
+            if hasattr(task_class, "validate_config"):
+                try:
+                    task_config = task_class.validate_config(config.get(name, {}))
+                    config[name] = task_config
+                except Exception as e:
+                    logger.error("Task {} failed to validate its config section:".format(name))
+                    logger.error(e)
+                    sys.exit(1)
             priority = task_class.PRIORITY if hasattr(task_class, "PRIORITY") else 0
             runnable_tasks.append((name, task_class, priority))
 
