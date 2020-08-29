@@ -10,7 +10,7 @@ from logzero import logger
 from diff_match_patch import diff_match_patch
 
 
-class PatchTask():
+class PatchTask:
 
     # The higher priority, the earlier the task runs
     # This is relative to all other enabled tasks
@@ -25,9 +25,9 @@ class PatchTask():
         if config.get("path", None) is None:
             raise Exception("Field 'path' missing")
         else:
+            config["path"] = os.path.abspath(os.path.expanduser(config["path"]))
             if not os.path.isdir(config["path"]):
                 raise Exception("Directory '{}' does not exist".format(config["path"]))
-            config["path"] = os.path.abspath(os.path.expanduser(config["path"]))
 
         return config
 

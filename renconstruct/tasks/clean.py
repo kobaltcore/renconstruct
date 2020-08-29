@@ -7,7 +7,7 @@ from subprocess import run
 from logzero import logger  # noqa: F401
 
 
-class CleanTask():
+class CleanTask:
 
     # The higher priority, the earlier the task runs
     # This is relative to all other enabled tasks
@@ -18,10 +18,14 @@ class CleanTask():
         self.config = config
 
     def post_build(self):
-        p = run("renutil clean {}".format(self.config["renutil"]["version"]),  # noqa: F841
-                capture_output=True, shell=True)
+        p = run(
+            "renutil clean {}".format(self.config["renutil"]["version"]), capture_output=True, shell=True  # noqa: F841
+        )
 
-        unused_apks = [item for item in glob(os.path.join(self.config["output"], "*.apk"))
-                       if not item.endswith("-universal-release.apk")]
+        unused_apks = [
+            item
+            for item in glob(os.path.join(self.config["output"], "*.apk"))
+            if not item.endswith("-universal-release.apk")
+        ]
         for file in unused_apks:
             os.remove(file)

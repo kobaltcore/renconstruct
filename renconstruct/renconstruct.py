@@ -24,7 +24,6 @@ from termcolor import colored
 
 
 class AliasedGroup(click.Group):
-
     def get_command(self, ctx, cmd_name):
         rv = click.Group.get_command(self, ctx, cmd_name)
         if rv is not None:
@@ -74,8 +73,10 @@ def scan_tasks(config):
     for file in task_files:
         shutil.copyfile(file, os.path.join(tmp_dir, os.path.basename(file)))
         logger.debug("Copying task {} to {}".format(file, os.path.join(tmp_dir, os.path.basename(file))))
-    task_files = [os.path.join("renconstruct_tasklib", os.path.basename(file))
-                  for file in glob(os.path.join(tmp_dir, "**", "*.py"), recursive=True)]
+    task_files = [
+        os.path.join("renconstruct_tasklib", os.path.basename(file))
+        for file in glob(os.path.join(tmp_dir, "**", "*.py"), recursive=True)
+    ]
     logger.debug("Found task files: {}".format(task_files))
 
     invalidate_caches()
@@ -140,9 +141,7 @@ def scan_tasks(config):
 
 def validate_config(config):
     if config.get("build", None) is None:
-        config["build"] = {"win": True,
-                           "mac": True,
-                           "android": True}
+        config["build"] = {"win": True, "mac": True, "android": True}
     if config["build"].get("win", None) is None:
         config["build"]["win"] = True
     if config["build"].get("mac", None) is None:
@@ -177,17 +176,31 @@ def validate_config(config):
 
 
 @click.command()
-@click.option("-i", "--input", "project", required=True, type=str,
-              help="The path to the Ren'Py project to build")
-@click.option("-o", "--output", required=True, type=str,
-              help="The directory to output build artifacts to")
-@click.option("-c", "--config", required=True, type=str,
-              help="The configuration file for this run")
-@click.option("-d", "--debug", is_flag=True,
-              help="If given, shows debug information if")
+@click.option(
+    "-i",
+    "--input",
+    "project",
+    required=True,
+    type=click.Path(exists=True, file_okay=False, resolve_path=True),
+    help="The path to the Ren'Py project to build",
+)
+@click.option(
+    "-o",
+    "--output",
+    required=True,
+    type=click.Path(file_okay=False, resolve_path=True, writable=True),
+    help="The directory to output build artifacts to",
+)
+@click.option(
+    "-c",
+    "--config",
+    required=True,
+    type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+    help="The configuration file for this run",
+)
+@click.option("-d", "--debug", is_flag=True, help="If given, shows debug information if")
 def cli(project, output, config, debug):
-    """A utility script to automatically build Ren'Py applications for multiple platforms.
-    """
+    """A utility script to automatically build Ren'Py applications for multiple platforms."""
     logzero.loglevel(logging.DEBUG if debug else logging.INFO)
 
     if not os.path.isdir(project):
@@ -253,10 +266,9 @@ def cli(project, output, config, debug):
     if config["build"]["android"]:
         logger.info("Building Android package")
         cmd = "renutil {} launch {} android_build \
-        {} assembleRelease --destination {}".format(registry_cmd,
-                                                    config["renutil"]["version"],
-                                                    config["project"],
-                                                    config["output"])
+        {} assembleRelease --destination {}".format(
+            registry_cmd, config["renutil"]["version"], config["project"], config["output"]
+        )
         proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
         for line in proc.stdout:
             line = str(line.strip(), "utf-8")
@@ -274,10 +286,9 @@ def cli(project, output, config, debug):
         logger.info("Building {} packages".format(", ".join(platforms_to_build)))
     if platforms_to_build:
         cmd = "renutil {} launch {} distribute \
-        {} --destination {}".format(registry_cmd,
-                                    config["renutil"]["version"],
-                                    config["project"],
-                                    config["output"])
+        {} --destination {}".format(
+            registry_cmd, config["renutil"]["version"], config["project"], config["output"]
+        )
         for package in platforms_to_build:
             cmd += " --package {}".format(package)
         proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
@@ -290,5 +301,5 @@ def cli(project, output, config, debug):
         run_tasks(config, runnable_tasks, stage="post-build")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

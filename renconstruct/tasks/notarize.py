@@ -10,7 +10,7 @@ from logzero import logger
 import yaml
 
 
-class NotarizeTask():
+class NotarizeTask:
 
     # The higher priority, the earlier the task runs
     # This is relative to all other enabled tasks
@@ -19,8 +19,12 @@ class NotarizeTask():
     def __init__(self, name, config):
         self.name = name
         self.config = config
+        self.active = config["build"]["mac"]
 
     def post_build(self):
+        if not self.active:
+            return
+
         with open("renotize.yml", "w") as f:
             f.write(yaml.dump(self.config["renotize"]))
 

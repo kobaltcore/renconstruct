@@ -12,14 +12,11 @@ from logzero import logger
 
 
 class UpdateableZipFile(ZipFile):
-
     class DeleteMarker(object):
         pass
 
     def __init__(self, file, mode="r", compression=ZIP_DEFLATED, allowZip64=False):
-        super(UpdateableZipFile, self).__init__(file, mode=mode,
-                                                compression=compression,
-                                                allowZip64=allowZip64)
+        super(UpdateableZipFile, self).__init__(file, mode=mode, compression=compression, allowZip64=allowZip64)
         self._replace = {}
         self._allow_updates = False
 
@@ -32,19 +29,16 @@ class UpdateableZipFile(ZipFile):
             temp_file = self._replace[name] = self._replace.get(name, tempfile.TemporaryFile())
             temp_file.write(bytes)
         else:
-            super(UpdateableZipFile, self).writestr(zinfo_or_arcname,
-                                                    bytes, compress_type=compress_type)
+            super(UpdateableZipFile, self).writestr(zinfo_or_arcname, bytes, compress_type=compress_type)
 
     def write(self, filename, arcname=None, compress_type=None):
         arcname = arcname or filename
         if self._allow_updates and arcname in self.namelist():
-            temp_file = self._replace[arcname] = self._replace.get(arcname,
-                                                                   tempfile.TemporaryFile())
+            temp_file = self._replace[arcname] = self._replace.get(arcname, tempfile.TemporaryFile())
             with open(filename, "rb") as source:
                 shutil.copyfileobj(source, temp_file)
         else:
-            super(UpdateableZipFile, self).write(filename,
-                                                 arcname=arcname, compress_type=compress_type)
+            super(UpdateableZipFile, self).write(filename, arcname=arcname, compress_type=compress_type)
 
     def __enter__(self):
         self._allow_updates = True
@@ -72,8 +66,9 @@ class UpdateableZipFile(ZipFile):
         try:
             temp_zip_path = os.path.join(tempdir, "new.zip")
             with ZipFile(self.filename, "r") as zip_read:
-                with ZipFile(temp_zip_path, "w", compression=self.compression,
-                             allowZip64=self._allowZip64) as zip_write:
+                with ZipFile(
+                    temp_zip_path, "w", compression=self.compression, allowZip64=self._allowZip64
+                ) as zip_write:
                     for item in zip_read.infolist():
                         replacement = self._replace.get(item.filename, None)
                         if isinstance(replacement, self.DeleteMarker):
@@ -92,7 +87,7 @@ class UpdateableZipFile(ZipFile):
             shutil.rmtree(tempdir)
 
 
-class SetExtendedMemoryLimitTask():
+class SetExtendedMemoryLimitTask:
 
     # The higher priority, the earlier the task runs
     # This is relative to all other enabled tasks
@@ -101,6 +96,7 @@ class SetExtendedMemoryLimitTask():
     def __init__(self, name, config):
         self.name = name
         self.config = config
+        self.active = config["build"]["win"]
 
     def set_large_address_aware(self, filename):
         IMAGE_FILE_LARGE_ADDRESS_AWARE = 0x0020
@@ -127,7 +123,7 @@ class SetExtendedMemoryLimitTask():
         # Get characteristics, check if IMAGE_FILE_LARGE_ADDRESS_AWARE bit is set
         charac_offset = pe_header_loc + 4 + CHARACTERISTICS_OFFSET
         f.seek(charac_offset)
-        bits, = struct.unpack("h", f.read(2))
+        (bits,) = struct.unpack("h", f.read(2))
 
         if (bits & IMAGE_FILE_LARGE_ADDRESS_AWARE) == IMAGE_FILE_LARGE_ADDRESS_AWARE:
             return True
@@ -142,6 +138,9 @@ class SetExtendedMemoryLimitTask():
         return False
 
     def post_build(self):
+        if not self.active:
+            return
+
         win_zip = glob(os.path.join(self.config["output"], "*-win.zip"))[0]
 
         with UpdateableZipFile(win_zip, "a") as f:
