@@ -12,10 +12,10 @@ description = "Better dates & times for Python"
 name = "arrow"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "0.15.8"
+version = "0.16.0"
 
 [package.dependencies]
-python-dateutil = "*"
+python-dateutil = ">=2.7.0"
 
 [[package]]
 category = "dev"
@@ -340,31 +340,31 @@ category = "main"
 description = "A utility script for quickly and automatically notarizing Ren'Py applications for macOS."
 name = "renotize"
 optional = false
-python-versions = ">=3.5,<4.0"
-version = "1.1.0"
+python-versions = ">=3.6,<4.0"
+version = "1.2.0"
 
 [package.dependencies]
-arrow = ">=0.15.6,<0.16.0"
+arrow = ">=0.16.0,<0.17.0"
 click = ">=7.1.2,<8.0.0"
 logzero = ">=1.5.0,<2.0.0"
 pyyaml = ">=5.3.1,<6.0.0"
-tqdm = ">=4.46.1,<5.0.0"
+tqdm = ">=4.48.2,<5.0.0"
 
 [[package]]
 category = "main"
 description = "A toolkit for managing Ren'Py instances via the command line"
 name = "renutil"
 optional = false
-python-versions = ">=3.5,<4.0"
-version = "1.11.0"
+python-versions = ">=3.6,<4.0"
+version = "1.12.0"
 
 [package.dependencies]
 click = ">=7.1.2,<8.0.0"
 logzero = ">=1.5.0,<2.0.0"
-lxml = ">=4.5.1,<5.0.0"
-requests = ">=2.23.0,<3.0.0"
+lxml = ">=4.5.2,<5.0.0"
+requests = ">=2.24.0,<3.0.0"
 semantic-version = ">=2.8.5,<3.0.0"
-tqdm = ">=4.46.1,<5.0.0"
+tqdm = ">=4.48.2,<5.0.0"
 
 [[package]]
 category = "main"
@@ -470,7 +470,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "29dc6ce840e3b816107918161859dfc5590f0eb76211152fc366708301957bd0"
+content-hash = "3e05015663fef82f12d5ff3bd42f4940531115f2d1c253805afa65ad36aefbe4"
 lock-version = "1.0"
 python-versions = "^3.6"
 
@@ -480,8 +480,8 @@ appdirs = [
     {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
 ]
 arrow = [
-    {file = "arrow-0.15.8-py2.py3-none-any.whl", hash = "sha256:271b8e05174d48e50324ed0dc5d74796c839c7e579a4f21cf1a7394665f9e94f"},
-    {file = "arrow-0.15.8.tar.gz", hash = "sha256:edc31dc051db12c95da9bac0271cd1027b8e36912daf6d4580af53b23e62721a"},
+    {file = "arrow-0.16.0-py2.py3-none-any.whl", hash = "sha256:98184d8dd3e5d30b96c2df4596526f7de679ccb467f358b82b0f686436f3a6b8"},
+    {file = "arrow-0.16.0.tar.gz", hash = "sha256:92aac856ea5175c804f7ccb96aca4d714d936f1c867ba59d747a8096ec30e90a"},
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},
@@ -657,12 +657,12 @@ regex = [
     {file = "regex-2020.7.14.tar.gz", hash = "sha256:3a3af27a8d23143c49a3420efe5b3f8cf1a48c6fc8bc6856b03f638abc1833bb"},
 ]
 renotize = [
-    {file = "renotize-1.1.0-py3-none-any.whl", hash = "sha256:e57f10e6f800818dbfd8a5d1f2193a3ab3e4268b8b4b683e0795f0e4cea3a544"},
-    {file = "renotize-1.1.0.tar.gz", hash = "sha256:1b664a183ff8b2242ff9414e871bf9e2e791f6aa8aa773d775eac891c8501c12"},
+    {file = "renotize-1.2.0-py3-none-any.whl", hash = "sha256:7d346c7c0f3d97168ff8de532d31e960bd86047f507c3b3fb100a1ff8541a5d8"},
+    {file = "renotize-1.2.0.tar.gz", hash = "sha256:05a04bf457ab39754a1ff37bde76a6facca47a5ef17c4bb9e4e24b96bdd05b49"},
 ]
 renutil = [
-    {file = "renutil-1.11.0-py3-none-any.whl", hash = "sha256:384cbcdd4e6405ca15a0e8eca4b9a6eed56dc4c40afd5d70d1b94cbe5a681d97"},
-    {file = "renutil-1.11.0.tar.gz", hash = "sha256:091c135f3be6f7225cf3e29ca6094e6939e60d87e3f0f997e073c7e5370492c1"},
+    {file = "renutil-1.12.0-py3-none-any.whl", hash = "sha256:138fa17bd21d66aadca3f10ea60e262191c8c98f1255d14375a8e0fe6c8d8757"},
+    {file = "renutil-1.12.0.tar.gz", hash = "sha256:664e6f1fe3b090fdce78ca66aa9133570b3b5f716071d1b4eb3f925224cb3a68"},
 ]
 requests = [
     {file = "requests-2.24.0-py2.py3-none-any.whl", hash = "sha256:fe75cc94a9443b9246fc7049224f75604b113c36acb93f87b80ed42c44cbb898"},

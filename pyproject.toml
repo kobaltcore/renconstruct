@@ -18,8 +18,8 @@ pyyaml = "^5.3.1"
 logzero = "^1.5.0"
 tqdm = "^4.48.2"
 termcolor = "^1.1.0"
-renutil = "^1.11.0"
-renotize = "^1.1.0"
+renutil = "^1.12.0"
+renotize = "^1.2.0"
 diff-match-patch = "^20200713"
 
 [tool.poetry.dev-dependencies]
