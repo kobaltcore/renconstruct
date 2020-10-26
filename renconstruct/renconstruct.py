@@ -10,7 +10,6 @@ from subprocess import run, Popen, PIPE, STDOUT
 from importlib import import_module, invalidate_caches
 
 ### Logging ###
-import logging
 from rich.logging import RichHandler
 
 logging.basicConfig(
@@ -27,9 +26,6 @@ import yaml
 
 ### CLI Parsing ###
 import click
-
-### Display ###
-from rich.console import Console
 
 
 class AliasedGroup(click.Group):
@@ -52,7 +48,7 @@ def run_tasks(config, tasks, stage="pre-build"):
     for name, task_class, priority in tasks:
         try:
             task = task_class(name, config)
-        except Exception as e:
+        except Exception:
             logger.exception("Task '{}' failed to initialize:".format(name))
             sys.exit(1)
         try:
@@ -62,7 +58,7 @@ def run_tasks(config, tasks, stage="pre-build"):
             elif stage == "post-build" and hasattr(task, "post_build"):
                 logger.info("Running '{}'".format(name))
                 task.post_build()
-        except Exception as e:
+        except Exception:
             logger.exception(
                 "Task '{}' failed to execute '{}':".format(
                     name, stage.replace("-", "_")
@@ -179,7 +175,7 @@ def scan_tasks(config):
                 try:
                     task_config = task_class.validate_config(config.get(name, {}))
                     config[name] = task_config
-                except Exception as e:
+                except Exception:
                     logger.exception(
                         "Task '{}' failed to validate its config section:".format(name)
                     )
