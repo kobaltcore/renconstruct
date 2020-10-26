@@ -53,16 +53,22 @@ def run_tasks(config, tasks, stage="pre-build"):
                 logger.info("Running {}".format(colored(name, "green")))
                 task.post_build()
         except Exception as e:
-            logger.error("Task {} failed to execute '{}':".format(name, stage.replace("-", "_")))
+            logger.error(
+                "Task {} failed to execute '{}':".format(name, stage.replace("-", "_"))
+            )
             logger.error(e)
             sys.exit(1)
 
 
 def scan_tasks(config):
-    task_files = glob(os.path.join(os.path.dirname(__file__), "tasks", "**", "*.py"), recursive=True)
+    task_files = glob(
+        os.path.join(os.path.dirname(__file__), "tasks", "**", "*.py"), recursive=True
+    )
     if config["tasks"]["path"] and os.path.isdir(config["tasks"]["path"]):
         logger.debug("Using tasks from {}".format(config["tasks"]["path"]))
-        task_files += glob(os.path.join(config["tasks"]["path"], "**", "*.py"), recursive=True)
+        task_files += glob(
+            os.path.join(config["tasks"]["path"], "**", "*.py"), recursive=True
+        )
 
     tmp_dir = os.path.join(os.path.dirname(__file__), "renconstruct_tasklib")
     logger.debug("Temporary task directory (rel): {}".format(tmp_dir))
@@ -72,7 +78,11 @@ def scan_tasks(config):
     os.makedirs(tmp_dir, exist_ok=True)
     for file in task_files:
         shutil.copyfile(file, os.path.join(tmp_dir, os.path.basename(file)))
-        logger.debug("Copying task {} to {}".format(file, os.path.join(tmp_dir, os.path.basename(file))))
+        logger.debug(
+            "Copying task {} to {}".format(
+                file, os.path.join(tmp_dir, os.path.basename(file))
+            )
+        )
     task_files = [
         os.path.join("renconstruct_tasklib", os.path.basename(file))
         for file in glob(os.path.join(tmp_dir, "**", "*.py"), recursive=True)
@@ -93,20 +103,33 @@ def scan_tasks(config):
             module_name = ".".join(name)
             logger.debug("Trying to load fallback {}".format(module_name))
             task_module = import_module(module_name)  # noqa: F841
-        classes = [(name, obj) for name, obj in inspect.getmembers(sys.modules[module_name], inspect.isclass)]
+        classes = [
+            (name, obj)
+            for name, obj in inspect.getmembers(
+                sys.modules[module_name], inspect.isclass
+            )
+        ]
         for name, task_class in classes:
             if name.endswith("Task"):
-                new_name = "_".join([item.lower() for item in re.split(r"(?=[A-Z])", name[:-4]) if item])
+                new_name = "_".join(
+                    [item.lower() for item in re.split(r"(?=[A-Z])", name[:-4]) if item]
+                )
                 available_tasks[new_name] = task_class
 
     if not available_tasks:
-        logger.warn("Did not find any tasks, something is likely off with the task library location")
+        logger.warn(
+            "Did not find any tasks, something is likely off with the task library location"
+        )
 
     available_task_names = set(available_tasks.keys())
-    defined_task_names = set([item for item in config["tasks"].keys() if item != "path"])
+    defined_task_names = set(
+        [item for item in config["tasks"].keys() if item != "path"]
+    )
     undefined_task_names = available_task_names - defined_task_names
     if undefined_task_names:
-        logger.warning("Some tasks were not defined in the config, assuming they are disabled:")
+        logger.warning(
+            "Some tasks were not defined in the config, assuming they are disabled:"
+        )
         for name in undefined_task_names:
             logger.warning("- {}".format(name))
 
@@ -114,7 +137,9 @@ def scan_tasks(config):
     for name, task_class in available_tasks.items():
         config_value = config["tasks"].get(name, False)
         if not isinstance(config_value, bool):
-            logger.error("{} must be 'True' or 'False', got {}".format(name, config_value))
+            logger.error(
+                "{} must be 'True' or 'False', got {}".format(name, config_value)
+            )
             sys.exit(1)
         else:
             task_class = available_tasks[name]
@@ -123,14 +148,21 @@ def scan_tasks(config):
     runnable_tasks = []
     logger.info("Loaded tasks:")
     for name, (enabled, task_class) in new_tasks.items():
-        logger.info("{} {}".format(colored("\u2714", "green") if enabled else colored("\u2718", "red"), name))
+        logger.info(
+            "{} {}".format(
+                colored("\u2714", "green") if enabled else colored("\u2718", "red"),
+                name,
+            )
+        )
         if enabled:
             if hasattr(task_class, "validate_config"):
                 try:
                     task_config = task_class.validate_config(config.get(name, {}))
                     config[name] = task_config
                 except Exception as e:
-                    logger.error("Task {} failed to validate its config section:".format(name))
+                    logger.error(
+                        "Task {} failed to validate its config section:".format(name)
+                    )
                     logger.error(e)
                     sys.exit(1)
             priority = task_class.PRIORITY if hasattr(task_class, "PRIORITY") else 0
@@ -198,25 +230,16 @@ def validate_config(config):
     type=click.Path(exists=True, dir_okay=False, resolve_path=True),
     help="The configuration file for this run",
 )
-@click.option("-d", "--debug", is_flag=True, help="If given, shows debug information if")
+@click.option(
+    "-d", "--debug", is_flag=True, help="If given, shows debug information if"
+)
 def cli(project, output, config, debug):
     """A utility script to automatically build Ren'Py applications for multiple platforms."""
     logzero.loglevel(logging.DEBUG if debug else logging.INFO)
 
-    if not os.path.isdir(project):
-        logger.error("The path to the project is incorrect.")
-        sys.exit(1)
-
     if not os.path.exists(output):
         logger.warning("The output directory does not exist, creating it...")
         os.makedirs(output, exist_ok=True)
-    if not os.path.isdir(output):
-        logger.error("The output path is not a directory.")
-        sys.exit(1)
-
-    if not os.path.exists(config):
-        logger.error("The path to the config file is incorrect.")
-        sys.exit(1)
 
     with open(config, "r") as f:
         config = yaml.full_load(f)
@@ -245,20 +268,41 @@ def cli(project, output, config, debug):
 
     logger.info("Checking available Ren'Py versions")
     p = run("renutil {} list".format(registry_cmd), capture_output=True, shell=True)
-    available_versions = [item.strip() for item in p.stdout.decode("utf-8").split("\n") if item.strip()]
+    available_versions = [
+        item.strip() for item in p.stdout.decode("utf-8").split("\n") if item.strip()
+    ]
 
     if config["renutil"]["version"] == "latest":
-        p = run("renutil {} list --all".format(registry_cmd), capture_output=True, shell=True)
-        chosen_version = [item.strip() for item in p.stdout.decode("utf-8").split("\n")][0]
+        p = run(
+            "renutil {} list --all".format(registry_cmd),
+            capture_output=True,
+            shell=True,
+        )
+        chosen_version = [
+            item.strip() for item in p.stdout.decode("utf-8").split("\n")
+        ][0]
         config["renutil"]["version"] = chosen_version
 
     if config["renutil"]["version"] not in available_versions:
-        logger.warning("Ren'Py {} is not installed, installing now...".format(config["renutil"]["version"]))
-        p = run("renutil {} install {}".format(registry_cmd, config["renutil"]["version"]), shell=True)
+        logger.warning(
+            "Ren'Py {} is not installed, installing now...".format(
+                config["renutil"]["version"]
+            )
+        )
+        p = run(
+            "renutil {} install {}".format(registry_cmd, config["renutil"]["version"]),
+            shell=True,
+        )
 
-    p = run("renutil {} show {}".format(registry_cmd, config["renutil"]["version"]), capture_output=True, shell=True)
+    p = run(
+        "renutil {} show {}".format(registry_cmd, config["renutil"]["version"]),
+        capture_output=True,
+        shell=True,
+    )
     output = p.stdout.decode("utf-8").split("\n")
-    config["renutil"]["path"] = [item.strip() for item in output][1].lstrip("Install Location:").strip()
+    config["renutil"]["path"] = (
+        [item.strip() for item in output][1].lstrip("Install Location:").strip()
+    )
 
     if runnable_tasks:
         run_tasks(config, runnable_tasks, stage="pre-build")
@@ -267,7 +311,10 @@ def cli(project, output, config, debug):
         logger.info("Building Android package")
         cmd = "renutil {} launch {} android_build \
         {} assembleRelease --destination {}".format(
-            registry_cmd, config["renutil"]["version"], config["project"], config["output"]
+            registry_cmd,
+            config["renutil"]["version"],
+            config["project"],
+            config["output"],
         )
         proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
         for line in proc.stdout:
@@ -287,7 +334,10 @@ def cli(project, output, config, debug):
     if platforms_to_build:
         cmd = "renutil {} launch {} distribute \
         {} --destination {}".format(
-            registry_cmd, config["renutil"]["version"], config["project"], config["output"]
+            registry_cmd,
+            config["renutil"]["version"],
+            config["project"],
+            config["output"],
         )
         for package in platforms_to_build:
             cmd += " --package {}".format(package)
