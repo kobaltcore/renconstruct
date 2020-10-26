@@ -89,7 +89,7 @@ The task works by looking at a directory of patch files (specified in the config
 For example, if you wanted to patch the file `renpy/display/presplash.py` you would generated a patch file and name it `presplash.py`. After that you would put it into the directory `patches/renpy/display/presplash.py`.
 Patch files are expected to match the `diff-match-patch` format for diffs. These types of files can be easily generated using the [`diffusor`](https://github.com/kobaltcore/diffusor) command-line utility.
 
-renConstruct will automatically figure out the actual file to apply it to, as well as create a backup of the original file. If any part of the patching process files, all changes are rolled back. it is also guaranteed that a file will only ever be patched once. Even if a file has been patched before and the patch file has changed, the new patch will be reliably applied to the original, unmodified file and the currently modified version will be replaced by the new version.
+renConstruct will automatically figure out the actual file to apply it to, as well as create a backup of the original file. If any part of the patching process fails, all changes are rolled back. It is also guaranteed that a file will only ever be patched once. Even if a file has been patched before and the patch file has changed, the new patch will be reliably applied to the original, unmodified file and the currently modified version will be replaced by the new version.
 
 ### Custom Tasks
 Custom tasks can easily be added using the `path` value. It should point to a directory containing Python files.
