@@ -4,7 +4,7 @@ from glob import glob
 from subprocess import run
 
 ### Logging ###
-from logzero import logger  # noqa: F401
+from renconstruct import logger
 
 
 class CleanTask:
@@ -18,7 +18,11 @@ class CleanTask:
         self.config = config
 
     def post_build(self):
-        run("renutil clean {}".format(self.config["renutil"]["version"]), capture_output=True, shell=True)  # noqa: F841
+        run(
+            "renutil clean {}".format(self.config["renutil"]["version"]),
+            capture_output=True,
+            shell=True,
+        )  # noqa: F841
 
         unused_apks = [
             item
@@ -26,4 +30,5 @@ class CleanTask:
             if not item.endswith("-universal-release.apk")
         ]
         for file in unused_apks:
+            logger.debug("Removing file '{}'".format(os.path.basename(file)))
             os.remove(file)

@@ -10,8 +10,17 @@ from subprocess import run, Popen, PIPE, STDOUT
 from importlib import import_module, invalidate_caches
 
 ### Logging ###
-import logzero
-from logzero import logger
+import logging
+from rich.logging import RichHandler
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler(rich_tracebacks=True, markup=True)],
+)
+
+logger = logging.getLogger("rich")
 
 ### Parsing ###
 import yaml
@@ -20,7 +29,7 @@ import yaml
 import click
 
 ### Display ###
-from termcolor import colored
+from rich.console import Console
 
 
 class AliasedGroup(click.Group):
@@ -33,7 +42,9 @@ class AliasedGroup(click.Group):
             return None
         elif len(matches) == 1:
             return click.Group.get_command(self, ctx, matches[0])
-        ctx.fail("Too many matches: {}".format(", ".join(sorted(matches))))
+        ctx.fail(
+            "Too many matches: [green]{}[/green]".format(", ".join(sorted(matches)))
+        )
 
 
 def run_tasks(config, tasks, stage="pre-build"):
@@ -42,21 +53,21 @@ def run_tasks(config, tasks, stage="pre-build"):
         try:
             task = task_class(name, config)
         except Exception as e:
-            logger.error("Task {} failed to initialize:".format(name))
-            logger.error(e)
+            logger.exception("Task '{}' failed to initialize:".format(name))
             sys.exit(1)
         try:
             if stage == "pre-build" and hasattr(task, "pre_build"):
-                logger.info("Running {}".format(colored(name, "green")))
+                logger.info("Running '{}'".format(name))
                 task.pre_build()
             elif stage == "post-build" and hasattr(task, "post_build"):
-                logger.info("Running {}".format(colored(name, "green")))
+                logger.info("Running '{}'".format(name))
                 task.post_build()
         except Exception as e:
-            logger.error(
-                "Task {} failed to execute '{}':".format(name, stage.replace("-", "_"))
+            logger.exception(
+                "Task '{}' failed to execute '{}':".format(
+                    name, stage.replace("-", "_")
+                )
             )
-            logger.error(e)
             sys.exit(1)
 
 
@@ -73,9 +84,11 @@ def scan_tasks(config):
     tmp_dir = os.path.join(os.path.dirname(__file__), "renconstruct_tasklib")
     logger.debug("Temporary task directory (rel): {}".format(tmp_dir))
     logger.debug("Temporary task directory (abs): {}".format(os.path.abspath(tmp_dir)))
+
     if os.path.isdir(tmp_dir):
         shutil.rmtree(tmp_dir)
     os.makedirs(tmp_dir, exist_ok=True)
+
     for file in task_files:
         shutil.copyfile(file, os.path.join(tmp_dir, os.path.basename(file)))
         logger.debug(
@@ -83,25 +96,33 @@ def scan_tasks(config):
                 file, os.path.join(tmp_dir, os.path.basename(file))
             )
         )
+
     task_files = [
         os.path.join("renconstruct_tasklib", os.path.basename(file))
         for file in glob(os.path.join(tmp_dir, "**", "*.py"), recursive=True)
+        if not file.endswith("__init__.py")
     ]
-    logger.debug("Found task files: {}".format(task_files))
+    logger.debug(
+        "Found task files: [green]{}[/green]".format(
+            ", ".join([os.path.basename(path) for path in task_files])
+        )
+    )
 
     invalidate_caches()
 
     available_tasks = {}
     for file in task_files:
         name = os.path.splitext(file)[0].split(os.sep)
-        logger.debug("Got task file {} - {}".format(file, name))
+        logger.debug("Got task file [green]{}[/green]".format(file))
         try:
             module_name = "renconstruct." + ".".join(name)
-            logger.debug("Trying to load {}".format(module_name))
+            logger.debug("Trying to load [yellow]{}[/yellow]".format(module_name))
             task_module = import_module(module_name)  # noqa: F841
         except:  # noqa: E722
             module_name = ".".join(name)
-            logger.debug("Trying to load fallback {}".format(module_name))
+            logger.debug(
+                "Trying to load fallback [salmon]{}[/salmon]".format(module_name)
+            )
             task_module = import_module(module_name)  # noqa: F841
         classes = [
             (name, obj)
@@ -117,7 +138,7 @@ def scan_tasks(config):
                 available_tasks[new_name] = task_class
 
     if not available_tasks:
-        logger.warn(
+        logger.warning(
             "Did not find any tasks, something is likely off with the task library location"
         )
 
@@ -138,7 +159,7 @@ def scan_tasks(config):
         config_value = config["tasks"].get(name, False)
         if not isinstance(config_value, bool):
             logger.error(
-                "{} must be 'True' or 'False', got {}".format(name, config_value)
+                "'{}' must be 'True' or 'False', got '{}'".format(name, config_value)
             )
             sys.exit(1)
         else:
@@ -150,8 +171,7 @@ def scan_tasks(config):
     for name, (enabled, task_class) in new_tasks.items():
         logger.info(
             "{} {}".format(
-                colored("\u2714", "green") if enabled else colored("\u2718", "red"),
-                name,
+                "[green]\u2714[/green]" if enabled else "[red]\u2718[/red]", name
             )
         )
         if enabled:
@@ -160,10 +180,9 @@ def scan_tasks(config):
                     task_config = task_class.validate_config(config.get(name, {}))
                     config[name] = task_config
                 except Exception as e:
-                    logger.error(
-                        "Task {} failed to validate its config section:".format(name)
+                    logger.exception(
+                        "Task '{}' failed to validate its config section:".format(name)
                     )
-                    logger.error(e)
                     sys.exit(1)
             priority = task_class.PRIORITY if hasattr(task_class, "PRIORITY") else 0
             runnable_tasks.append((name, task_class, priority))
@@ -235,7 +254,7 @@ def validate_config(config):
 )
 def cli(project, output, config, debug):
     """A utility script to automatically build Ren'Py applications for multiple platforms."""
-    logzero.loglevel(logging.DEBUG if debug else logging.INFO)
+    logger.setLevel(logging.DEBUG if debug else logging.INFO)
 
     if not os.path.exists(output):
         logger.warning("The output directory does not exist, creating it...")
@@ -285,7 +304,7 @@ def cli(project, output, config, debug):
 
     if config["renutil"]["version"] not in available_versions:
         logger.warning(
-            "Ren'Py {} is not installed, installing now...".format(
+            "Ren'Py [green]{}[/green] is not installed, installing now...".format(
                 config["renutil"]["version"]
             )
         )

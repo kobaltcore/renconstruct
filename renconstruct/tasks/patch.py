@@ -4,7 +4,7 @@ from glob import glob
 from shutil import copyfile
 
 ### Logging ###
-from logzero import logger
+from renconstruct import logger
 
 ### Diffing ###
 from diff_match_patch import diff_match_patch
@@ -32,7 +32,9 @@ class PatchTask:
         return config
 
     def pre_build(self):
-        patch_files = glob(os.path.join(self.config[self.name]["path"], "**", "*.*"), recursive=True)
+        patch_files = glob(
+            os.path.join(self.config[self.name]["path"], "**", "*.*"), recursive=True
+        )
         amount = len(patch_files)
         logger.debug("Found {} patch file{}.".format(amount, "s" if amount > 1 else ""))
 
@@ -55,8 +57,11 @@ class PatchTask:
             backup_file = "{}.original".format(target_file)
 
             if os.path.isfile(backup_file):
-                logger.debug("Original file found, replacing current version with original before patching")
-                os.remove(target_file)
+                logger.debug(
+                    "Original file found, replacing current version with original before patching"
+                )
+                if os.path.isfile(target_file):
+                    os.remove(target_file)
                 copyfile(backup_file, target_file)
             else:
                 copyfile(target_file, backup_file)
@@ -77,9 +82,13 @@ class PatchTask:
 
         if errors:
             for patch_file in patch_files:
-                rel_path = os.path.relpath(patch_file, start=self.config[self.name]["path"])
+                rel_path = os.path.relpath(
+                    patch_file, start=self.config[self.name]["path"]
+                )
                 target_file = os.path.join(self.config["renutil"]["path"], rel_path)
                 backup_file = "{}.original".format(target_file)
                 os.remove(target_file)
                 os.rename(backup_file, target_file)
-            raise Exception("Some errors occured while patching Ren'Py, rolled back all changes")
+            raise Exception(
+                "Some errors occured while patching Ren'Py, rolled back all changes"
+            )

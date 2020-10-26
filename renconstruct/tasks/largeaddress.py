@@ -8,7 +8,7 @@ from glob import glob
 from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 
 ### Logging ###
-from logzero import logger
+from renconstruct import logger
 
 
 class UpdateableZipFile(ZipFile):
@@ -16,7 +16,9 @@ class UpdateableZipFile(ZipFile):
         pass
 
     def __init__(self, file, mode="r", compression=ZIP_DEFLATED, allowZip64=False):
-        super(UpdateableZipFile, self).__init__(file, mode=mode, compression=compression, allowZip64=allowZip64)
+        super(UpdateableZipFile, self).__init__(
+            file, mode=mode, compression=compression, allowZip64=allowZip64
+        )
         self._replace = {}
         self._allow_updates = False
 
@@ -26,19 +28,27 @@ class UpdateableZipFile(ZipFile):
         else:
             name = zinfo_or_arcname
         if self._allow_updates and name in self.namelist():
-            temp_file = self._replace[name] = self._replace.get(name, tempfile.TemporaryFile())
+            temp_file = self._replace[name] = self._replace.get(
+                name, tempfile.TemporaryFile()
+            )
             temp_file.write(bytes)
         else:
-            super(UpdateableZipFile, self).writestr(zinfo_or_arcname, bytes, compress_type=compress_type)
+            super(UpdateableZipFile, self).writestr(
+                zinfo_or_arcname, bytes, compress_type=compress_type
+            )
 
     def write(self, filename, arcname=None, compress_type=None):
         arcname = arcname or filename
         if self._allow_updates and arcname in self.namelist():
-            temp_file = self._replace[arcname] = self._replace.get(arcname, tempfile.TemporaryFile())
+            temp_file = self._replace[arcname] = self._replace.get(
+                arcname, tempfile.TemporaryFile()
+            )
             with open(filename, "rb") as source:
                 shutil.copyfileobj(source, temp_file)
         else:
-            super(UpdateableZipFile, self).write(filename, arcname=arcname, compress_type=compress_type)
+            super(UpdateableZipFile, self).write(
+                filename, arcname=arcname, compress_type=compress_type
+            )
 
     def __enter__(self):
         self._allow_updates = True
@@ -67,7 +77,10 @@ class UpdateableZipFile(ZipFile):
             temp_zip_path = os.path.join(tempdir, "new.zip")
             with ZipFile(self.filename, "r") as zip_read:
                 with ZipFile(
-                    temp_zip_path, "w", compression=self.compression, allowZip64=self._allowZip64
+                    temp_zip_path,
+                    "w",
+                    compression=self.compression,
+                    allowZip64=self._allowZip64,
                 ) as zip_write:
                     for item in zip_read.infolist():
                         replacement = self._replace.get(item.filename, None)
@@ -107,7 +120,7 @@ class SetExtendedMemoryLimitTask:
 
         # Check for MZ Header
         if f.read(2) != b"MZ":
-            logger.error("Not MZ for file {}".format(filename))
+            logger.error("No MZ for file '{}'".format(filename))
             sys.exit(1)
 
         # Get PE header location
@@ -117,7 +130,7 @@ class SetExtendedMemoryLimitTask:
         # Get PE header, check it
         f.seek(pe_header_loc)
         if f.read(4) != b"PE\0\0":
-            logger.error("Error in PE header for file {}".format(filename))
+            logger.error("Error in PE header for file '{}'".format(filename))
             sys.exit(1)
 
         # Get characteristics, check if IMAGE_FILE_LARGE_ADDRESS_AWARE bit is set
@@ -145,14 +158,18 @@ class SetExtendedMemoryLimitTask:
 
         with UpdateableZipFile(win_zip, "a") as f:
             root_level = os.path.commonprefix(f.namelist())
-            pythonw_exe_proto = "/".join((root_level.rstrip("/"), "lib/windows-i686/pythonw.exe"))
+            pythonw_exe_proto = "/".join(
+                (root_level.rstrip("/"), "lib/windows-i686/pythonw.exe")
+            )
             main_exe, main_sub_exe, pythonw_exe = None, None, None
             for file in f.namelist():
                 if len(file.split("/")) == 2 and os.path.splitext(file)[1] == ".exe":
                     main_exe = file
                 if file == pythonw_exe_proto:
                     pythonw_exe = file
-            main_sub_exe_proto = "/".join((root_level.rstrip("/"), "lib/windows-i686", os.path.basename(main_exe)))
+            main_sub_exe_proto = "/".join(
+                (root_level.rstrip("/"), "lib/windows-i686", os.path.basename(main_exe))
+            )
             for file in f.namelist():
                 if file == main_sub_exe_proto:
                     main_sub_exe = file
@@ -160,11 +177,11 @@ class SetExtendedMemoryLimitTask:
             if not all((main_exe, main_sub_exe, pythonw_exe)):
                 logger.error("Could not find executable to patch!")
                 if not main_exe:
-                    logger.debug("main_exe: {}".format(main_exe))
+                    logger.debug("main_exe: '{}'".format(main_exe))
                 if not main_sub_exe:
-                    logger.debug("main_sub_exe: {}".format(main_sub_exe))
+                    logger.debug("main_sub_exe: '{}'".format(main_sub_exe))
                 if not pythonw_exe:
-                    logger.debug("pythonw_exe: {}".format(pythonw_exe))
+                    logger.debug("pythonw_exe: '{}'".format(pythonw_exe))
                 sys.exit(1)
 
             with f.open(main_exe) as file:
@@ -172,10 +189,12 @@ class SetExtendedMemoryLimitTask:
                     tmp.write(file.read())
             already_set = self.set_large_address_aware("main.exe")
             if not already_set:
-                logger.info("Setting LAA flag for {}".format(main_exe))
+                logger.info("Setting LAA flag for '{}'".format(main_exe))
                 f.write("main.exe", main_exe)
             else:
-                logger.info("LAA flag was already set for {}, skipping".format(main_exe))
+                logger.info(
+                    "LAA flag was already set for '{}', skipping".format(main_exe)
+                )
             os.remove("main.exe")
 
             with f.open(main_sub_exe) as file:
@@ -183,10 +202,12 @@ class SetExtendedMemoryLimitTask:
                     tmp.write(file.read())
             already_set = self.set_large_address_aware("main_sub.exe")
             if not already_set:
-                logger.info("Setting LAA flag for {}".format(main_sub_exe))
+                logger.info("Setting LAA flag for '{}'".format(main_sub_exe))
                 f.write("main_sub.exe", main_sub_exe)
             else:
-                logger.info("LAA flag was already set for {}, skipping".format(main_sub_exe))
+                logger.info(
+                    "LAA flag was already set for '{}', skipping".format(main_sub_exe)
+                )
             os.remove("main_sub.exe")
 
             with f.open(pythonw_exe) as file:
@@ -194,8 +215,10 @@ class SetExtendedMemoryLimitTask:
                     tmp.write(file.read())
             already_set = self.set_large_address_aware("pythonw.exe")
             if not already_set:
-                logger.info("Setting LAA flag for {}".format(pythonw_exe))
+                logger.info("Setting LAA flag for '{}'".format(pythonw_exe))
                 f.write("pythonw.exe", pythonw_exe)
             else:
-                logger.info("LAA flag was already set for {}, skipping".format(pythonw_exe))
+                logger.info(
+                    "LAA flag was already set for '{}', skipping".format(pythonw_exe)
+                )
             os.remove("pythonw.exe")

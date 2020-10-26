@@ -1,1 +1,1 @@
-from .renconstruct import cli  # noqa: F401
+from .renconstruct import cli, logger  # noqa: F401

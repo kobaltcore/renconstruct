@@ -4,7 +4,7 @@ from glob import glob
 from subprocess import Popen, PIPE, STDOUT
 
 ### Logging ###
-from logzero import logger
+from renconstruct import logger
 
 ### Parsing ###
 import yaml
