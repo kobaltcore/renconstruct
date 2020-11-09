@@ -22,7 +22,7 @@ class CleanTask:
             "renutil clean {}".format(self.config["renutil"]["version"]),
             capture_output=True,
             shell=True,
-        )  # noqa: F841
+        )
 
         unused_apks = [
             item
