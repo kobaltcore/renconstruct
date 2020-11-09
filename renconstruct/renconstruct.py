@@ -188,9 +188,9 @@ def scan_tasks(config):
 
 def validate_config(config):
     if config.get("build", None) is None:
-        config["build"] = {"win": True, "mac": True, "android": True}
-    if config["build"].get("win", None) is None:
-        config["build"]["win"] = True
+        config["build"] = {"pc": True, "mac": True, "android": True}
+    if config["build"].get("pc", None) is None:
+        config["build"]["pc"] = True
     if config["build"].get("mac", None) is None:
         config["build"]["mac"] = True
     if config["build"].get("android", None) is None:
@@ -338,8 +338,8 @@ def cli(project, output, config, debug):
                 logger.debug(line)
 
     platforms_to_build = []
-    if config["build"]["win"]:
-        platforms_to_build.append("win")
+    if config["build"]["pc"]:
+        platforms_to_build.append("pc")
     if config["build"]["mac"]:
         platforms_to_build.append("mac")
     if len(platforms_to_build) == 1:

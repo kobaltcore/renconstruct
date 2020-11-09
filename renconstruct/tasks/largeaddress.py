@@ -109,7 +109,7 @@ class SetExtendedMemoryLimitTask:
     def __init__(self, name, config):
         self.name = name
         self.config = config
-        self.active = config["build"]["win"]
+        self.active = config["build"]["pc"]
 
     def set_large_address_aware(self, filename):
         IMAGE_FILE_LARGE_ADDRESS_AWARE = 0x0020
@@ -154,7 +154,7 @@ class SetExtendedMemoryLimitTask:
         if not self.active:
             return
 
-        win_zip = glob(os.path.join(self.config["output"], "*-win.zip"))[0]
+        win_zip = glob(os.path.join(self.config["output"], "*-pc.zip"))[0]
 
         with UpdateableZipFile(win_zip, "a") as f:
             root_level = os.path.commonprefix(f.namelist())
