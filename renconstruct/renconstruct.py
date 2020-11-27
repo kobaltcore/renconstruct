@@ -346,6 +346,7 @@ def cli(project, output, config, debug):
         logger.info("Building {} package".format(platforms_to_build[0]))
     elif len(platforms_to_build) > 1:
         logger.info("Building {} packages".format(", ".join(platforms_to_build)))
+
     if platforms_to_build:
         cmd = "renutil {} launch {} distribute \
         {} --destination {}".format(
