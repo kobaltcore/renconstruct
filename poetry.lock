@@ -8,14 +8,15 @@ python-versions = "*"
 
 [[package]]
 name = "arrow"
-version = "0.17.0"
+version = "1.0.3"
 description = "Better dates & times for Python"
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+python-versions = ">=3.6"
 
 [package.dependencies]
 python-dateutil = ">=2.7.0"
+typing-extensions = {version = "*", markers = "python_version < \"3.8\""}
 
 [[package]]
 name = "atomicwrites"
@@ -372,34 +373,35 @@ python-versions = "*"
 
 [[package]]
 name = "renotize"
-version = "1.4.0"
+version = "1.5.0"
 description = "A utility script for quickly and automatically notarizing Ren'Py applications for macOS."
 category = "main"
 optional = false
-python-versions = ">=3.6,<4.0"
+python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
-arrow = ">=0.17.0,<0.18.0"
+arrow = ">=1.0.3,<2.0.0"
 click = ">=7.1.2,<8.0.0"
 pyyaml = ">=5.3.1,<6.0.0"
-rich = ">=9.2.0,<10.0.0"
-tqdm = ">=4.51.0,<5.0.0"
+PyYAML = ">=5.4.1,<6.0.0"
+rich = ">=10.0.0,<11.0.0"
+tqdm = ">=4.59.0,<5.0.0"
 
 [[package]]
 name = "renutil"
-version = "1.14.0"
+version = "1.15.0"
 description = "A toolkit for managing Ren'Py instances via the command line"
 category = "main"
 optional = false
-python-versions = ">=3.6,<4.0"
+python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
 click = ">=7.1.2,<8.0.0"
-lxml = ">=4.6.1,<5.0.0"
-requests = ">=2.24.0,<3.0.0"
-rich = ">=9.1.0,<10.0.0"
+lxml = ">=4.6.3,<5.0.0"
+requests = ">=2.25.1,<3.0.0"
+rich = ">=10.0.0,<11.0.0"
 semantic-version = ">=2.8.5,<3.0.0"
-tqdm = ">=4.51.0,<5.0.0"
+tqdm = ">=4.59.0,<5.0.0"
 
 [[package]]
 name = "requests"
@@ -421,7 +423,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 
 [[package]]
 name = "rich"
-version = "9.13.0"
+version = "10.0.0"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 category = "main"
 optional = false
@@ -544,7 +546,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "bddfa6c5f28a0d14d99de3c46e68e48dbbb4fe0e049efe0d4ff395c73a27df04"
+content-hash = "a0e7195457a51c3ea432f4c0c3d4a8480beb946f4409c1026b7c54f385dc63ff"
 
 [metadata.files]
 appdirs = [
@@ -552,8 +554,8 @@ appdirs = [
     {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
 ]
 arrow = [
-    {file = "arrow-0.17.0-py2.py3-none-any.whl", hash = "sha256:e098abbd9af3665aea81bdd6c869e93af4feb078e98468dd351c383af187aac5"},
-    {file = "arrow-0.17.0.tar.gz", hash = "sha256:ff08d10cda1d36c68657d6ad20d74fbea493d980f8b2d45344e00d6ed2bf6ed4"},
+    {file = "arrow-1.0.3-py3-none-any.whl", hash = "sha256:3515630f11a15c61dcb4cdd245883270dd334c83f3e639824e65a4b79cc48543"},
+    {file = "arrow-1.0.3.tar.gz", hash = "sha256:399c9c8ae732270e1aa58ead835a79a40d7be8aa109c579898eb41029b5a231d"},
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},
@@ -791,20 +793,20 @@ regex = [
     {file = "regex-2021.3.17.tar.gz", hash = "sha256:4b8a1fb724904139149a43e172850f35aa6ea97fb0545244dc0b805e0154ed68"},
 ]
 renotize = [
-    {file = "renotize-1.4.0-py3-none-any.whl", hash = "sha256:aacdbd2073dad51328e38fc1f4017352fe5bde4c26e3199b027ad8241ef4fbd7"},
-    {file = "renotize-1.4.0.tar.gz", hash = "sha256:e34eeadc8923435a4ff7298f8c63c491ebbd3e7476417801889f016a14301c41"},
+    {file = "renotize-1.5.0-py3-none-any.whl", hash = "sha256:680ebf22dc28a826d01b3267fcf7eaa27ff21024e65d73608da6af7d6b16d50c"},
+    {file = "renotize-1.5.0.tar.gz", hash = "sha256:e4c418b2f988faf0f7e83a0411a2e58f760cb4f4088d63347b71d90a9c9a7a49"},
 ]
 renutil = [
-    {file = "renutil-1.14.0-py3-none-any.whl", hash = "sha256:3490d6ecaf3f9e44a7ccb8190478c0f06663e8b239a8717f69855ab597f33552"},
-    {file = "renutil-1.14.0.tar.gz", hash = "sha256:b99bea1afc6819d006dc7f71e3f4864b46df5a03a331d93705ddf73b9f61dbb7"},
+    {file = "renutil-1.15.0-py3-none-any.whl", hash = "sha256:4cd411a2192465e5927c4d5f23a19f3934ca121fbcd896c4f9483368d80549c5"},
+    {file = "renutil-1.15.0.tar.gz", hash = "sha256:25d633f7e2dd40c707294487e1c4ed69f071ff9bb55c5f5c61eb93b75787630d"},
 ]
 requests = [
     {file = "requests-2.25.1-py2.py3-none-any.whl", hash = "sha256:c210084e36a42ae6b9219e00e48287def368a26d03a048ddad7bfee44f75871e"},
     {file = "requests-2.25.1.tar.gz", hash = "sha256:27973dd4a904a4f13b263a19c866c13b92a39ed1c964655f025f3f8d3d75b804"},
 ]
 rich = [
-    {file = "rich-9.13.0-py3-none-any.whl", hash = "sha256:9004f6449c89abadf689dad6f92393e760b8c3a8a8c4ea6d8d474066307c0e66"},
-    {file = "rich-9.13.0.tar.gz", hash = "sha256:d59e94a0e3e686f0d268fe5c7060baa1bd6744abca71b45351f5850a3aaa6764"},
+    {file = "rich-10.0.0-py3-none-any.whl", hash = "sha256:01b3fcc305ae71b9ade4a645b6e371d395c6cd9ba52dcf180bfba69ef05c13b5"},
+    {file = "rich-10.0.0.tar.gz", hash = "sha256:4674bd3056a72bb282ad581e3f8092dc110cdcc456b5ba76e34965cb85a69724"},
 ]
 semantic-version = [
     {file = "semantic_version-2.8.5-py2.py3-none-any.whl", hash = "sha256:45e4b32ee9d6d70ba5f440ec8cc5221074c7f4b0e8918bdab748cc37912440a9"},
