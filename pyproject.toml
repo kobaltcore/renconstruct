@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "renconstruct"
-version = "1.5.0"
+version = "1.6.0"
 description = "A utility script for automatically building Ren'Py applications for multiple platforms."
 authors = ["CobaltCore <cobaltcore@yandex.com>"]
 license = "MIT"
