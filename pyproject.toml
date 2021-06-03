@@ -13,15 +13,15 @@ renconstruct = "renconstruct.renconstruct:cli"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-click = "^7.1.2"
+click = "^8.0.1"
 pyyaml = "^5.3.1"
-tqdm = "^4.60.0"
+tqdm = "^4.61.0"
 termcolor = "^1.1.0"
-renutil = "^1.15.0"
-renotize = "^1.5.0"
+renutil = "^1.15.1"
+renotize = "^1.5.1"
 diff-match-patch = "^20200713"
 PyYAML = "^5.4.1"
-rich = "^10.1.0"
+rich = "^10.2.2"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.3"
