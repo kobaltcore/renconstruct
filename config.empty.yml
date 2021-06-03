@@ -3,9 +3,13 @@ tasks:
   notarize: false
   clean: true
   patch: false
+  overwrite_keystore: false
 
 patch:
   path: "renpy-patches"
+
+overwrite_keystore:
+  keystore: "<my b64-encoded keystore>"
 
 build:
   win: true

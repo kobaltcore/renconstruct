@@ -163,6 +163,7 @@ def scan_tasks(config):
             new_tasks[name] = (config_value, task_class)
 
     runnable_tasks = []
+    affected_files = []
     logger.info("Loaded tasks:")
     for name, (enabled, task_class) in new_tasks.items():
         logger.info(
@@ -181,9 +182,22 @@ def scan_tasks(config):
                     )
                     sys.exit(1)
             priority = task_class.PRIORITY if hasattr(task_class, "PRIORITY") else 0
+            for file in (
+                task_class.AFFECTED_FILES
+                if hasattr(task_class, "AFFECTED_FILES")
+                else []
+            ):
+                if file in affected_files:
+                    logger.exception(
+                        "Task '{}' specifies an affected file '{}' which was already specified by another task.".format(
+                            name, file
+                        )
+                    )
+                    sys.exit(1)
+                affected_files.append(file)
             runnable_tasks.append((name, task_class, priority))
 
-    return sorted(runnable_tasks, key=lambda x: x[2], reverse=True)
+    return sorted(runnable_tasks, key=lambda x: x[2], reverse=True), affected_files
 
 
 def validate_config(config):
@@ -265,7 +279,7 @@ def cli(project, output, config, debug):
 
     config = validate_config(config)
 
-    runnable_tasks = scan_tasks(config)
+    runnable_tasks, affected_files = scan_tasks(config)
 
     p = run("renutil --help", capture_output=True, shell=True)
     if not (b"Usage: renutil" in p.stdout and p.returncode == 0):
@@ -318,6 +332,26 @@ def cli(project, output, config, debug):
     config["renutil"]["path"] = (
         [item.strip() for item in output][1].lstrip("Install Location:").strip()
     )
+
+    if affected_files:
+        logger.info(
+            "Found {} affected files requiring backup...".format(len(affected_files))
+        )
+        for file in affected_files:
+            full_path = os.path.join(config["renutil"]["path"], file)
+            if not os.path.isfile(full_path):
+                logger.warning("'{}' could not be found".format(file))
+                continue
+            backup_path = os.path.join(
+                os.path.dirname(full_path),
+                "{}.original".format(os.path.basename(full_path)),
+            )
+            if os.path.isfile(backup_path):
+                logger.info("File '{}' already has a backup, restoring...".format(file))
+                shutil.copyfile(backup_path, full_path)
+                continue
+            logger.info("Backing up '{}'...".format(file))
+            shutil.copyfile(full_path, backup_path)
 
     if runnable_tasks:
         run_tasks(config, runnable_tasks, stage="pre-build")

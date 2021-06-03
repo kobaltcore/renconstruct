@@ -101,6 +101,8 @@ class DoSomethingTask():
 
     PRIORITY = -100
 
+    AFFECTED_FILES = ["rapt/hash.txt"]
+
     def __init__(self, name, config):
         self.name = name
         self.config = config
@@ -130,6 +132,8 @@ At that point they can do whatever they want. As an example, a custom task could
 Each task also has a `PRIORITY` class attribute which has a default value of `0` and determines the order in which to run the tasks. A higher priority means that task will be executed earlier than others with a lower value. Both positive and negative values are possible.
 
 As an example, the built-in `clean` task runs at `PRIORITY = -1000` to ensure it's always the last task to be run.
+
+Optionally, a task can specify a list of `AFFECTED_FILES`. This is a list of paths to files relative to the SDK directory which this task modifies. Any files listed here will be backed up by `renconstruct` upon its first run and will be restored to their original state on every subsequent run, ensuring that the task always has the same base to work off of. This is largely meant to combat state corruption, for example by running the patch task and disabling it in a subsequent run.
 
 ### Example
 ```bash
