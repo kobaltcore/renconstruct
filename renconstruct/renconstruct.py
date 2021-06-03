@@ -77,6 +77,11 @@ def scan_tasks(config):
             os.path.join(config["tasks"]["path"], "**", "*.py"), recursive=True
         )
 
+    if config["additional_tasks"] and os.path.isdir(config["additional_tasks"]):
+        logger.debug("Using additional tasks from {}".format(config["additional_tasks"]))
+        task_files += glob(
+            os.path.join(config["additional_tasks"], "**", "*.py"), recursive=True
+        )
     tmp_dir = os.path.join(os.path.dirname(__file__), "renconstruct_tasklib")
     logger.debug("Temporary task directory (rel): {}".format(tmp_dir))
     logger.debug("Temporary task directory (abs): {}".format(os.path.abspath(tmp_dir)))
@@ -232,6 +237,14 @@ def validate_config(config):
     help="The path to the Ren'Py project to build",
 )
 @click.option(
+    "-a",
+    "--additional-tasks-path",
+    "additional_tasks",
+    required=False,
+    type=click.Path(exists=True, file_okay=False, resolve_path=True),
+    help="Optional path to additional renConstruct tasks",
+)
+@click.option(
     "-o",
     "--output",
     required=True,
@@ -248,7 +261,7 @@ def validate_config(config):
 @click.option(
     "-d", "--debug", is_flag=True, help="If given, shows debug information if"
 )
-def cli(project, output, config, debug):
+def cli(project, output, config, debug, additional_tasks):
     """A utility script to automatically build Ren'Py applications for multiple platforms."""
     logger.setLevel(logging.DEBUG if debug else logging.INFO)
 
@@ -262,6 +275,7 @@ def cli(project, output, config, debug):
     config["project"] = project
     config["output"] = output
     config["debug"] = debug
+    config["additional_tasks"] = additional_tasks
 
     config = validate_config(config)
 

@@ -178,12 +178,17 @@ Usage: renconstruct.py [OPTIONS]
   platforms.
 
 Options:
-  -i, --input TEXT   The path to the Ren'Py project to build  [required]
-  -o, --output TEXT  The directory to output build artifacts to  [required]
-  -c, --config TEXT  The configuration file for this run  [required]
-  -d, --debug        If given, shows debug information if
-  --help             Show this message and exit.
+  -i, --input TEXT                   The path to the Ren'Py project to build  [required]
+  -o, --output TEXT                  The directory to output build artifacts to  [required]
+  -c, --config TEXT                  The configuration file for this run  [required]
+  -a, --additional-tasks-path TEXT   The path to additional tasks to be available for enablement [optional]
+  -d, --debug                        If given, shows debug information if
+  --help                             Show this message and exit.
 ```
+
+#### Additional Tasks Path
+
+By setting the additional tasks path option, you can reference a directory for tasks that may not be inside the Ren'Py project given. The task(s) would still have to be enabled within the `config.yml` in order to be run by renConstruct but can be run without without the project needing to know where the path to the task code resides (like running inside a GitHub Action container).
 
 # Disclaimer
 renConstruct is a hobby project and not in any way affiliated with Ren'Py. This means that there is no way I can guarantee that it will work at all, or continue to work once it does.
