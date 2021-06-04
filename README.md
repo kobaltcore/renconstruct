@@ -74,10 +74,10 @@ Given that the universal APK's are only a few Megabytes larger and more widely c
 #### `Notarize`
 This task runs in the `post-build` stage and utilizes the `renotize` utility to automatically notarize the macOS build of the project, if it was generated. The process is entirely automatic, though it may take a few minutes depending on the size of the game and the load on Apple's notarization servers.
 
-#### `Set Extended Memory Limit`
+#### `Set Extended Memory Limit` (**Deprecated**)
 This task runs in the `post-build` stage and operates on the Windows build of the project, if it was generated. Specifically, it modifies the executable file by setting the `LARGEADDRESSAWARE` flag in the header of the file, which enables the final build to access 4GB of RAM on Windows, instead of the typical 2GB when running in regular 32-Bit mode.
 
-Given that Ren'Py already supports 64-Bit operation under Linux and macOS (and through personal experience deploying thusly modified games), this option should be safe to use in effectively all cases.
+Given that Ren'Py 7.4+ now supports 64-Bit operation for all major desktop operating systems, including Windows, this task is now deprecated and only retained for legacy operation. If you're building with Ren'Py 7.4+ you do not need this task.
 
 #### `Patch`
 This task runs early in the `pre-build` stage and is capable of applying patch files (code diffs) to Python files of the Ren'Py instance that will be used to build the project. This allows for automatic application of game-specific patches before building, enabling customization at the engine level.
@@ -90,6 +90,19 @@ For example, if you wanted to patch the file `renpy/display/presplash.py` you wo
 Patch files are expected to match the `diff-match-patch` format for diffs. These types of files can be easily generated using the [`diffusor`](https://github.com/kobaltcore/diffusor) command-line utility.
 
 renConstruct will automatically figure out the actual file to apply it to, as well as create a backup of the original file. If any part of the patching process fails, all changes are rolled back. It is also guaranteed that a file will only ever be patched once. Even if a file has been patched before and the patch file has changed, the new patch will be reliably applied to the original, unmodified file and the currently modified version will be replaced by the new version.
+
+#### `Overwrite Keystore`
+This task runs early in the `pre-build` stage and is capable of overwriting the `android.keystore` file in Ren'Py's Android packager with a custom one. This is useful because you typically want to sign all your APK's with the same key, as otherwise Google will prevent you from updating your game, since the signature will have changed.
+
+This task works by reading the keystore file either from the environment variable `RC_KEYSTORE` or from a config option like this:
+```yaml
+overwrite_keystore:
+  keystore: "<my keystore>"
+```
+
+Since the keystore is a binary file, it can't just be pasted into a text document. To get around this issue, this task expects the keystore to be base64-encoded and for that representation to be stored either in the environment variable or in the config file, depending on which method you choose.
+
+The value in the config file takes precedence if both options are given. If the task is active but neither option is given, it will error out.
 
 ### Custom Tasks
 Custom tasks can easily be added using the `path` value. It should point to a directory containing Python files.
