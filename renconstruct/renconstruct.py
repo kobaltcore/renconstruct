@@ -358,7 +358,7 @@ def cli(project, output, config, debug):
 
     if config["build"]["android"]:
         logger.info("Building Android package")
-        cmd = "renutil {} launch {} android_build \
+        cmd = "renutil {} launch {} -h android_build \
         {} assembleRelease --destination {}".format(
             registry_cmd,
             config["renutil"]["version"],
@@ -382,7 +382,7 @@ def cli(project, output, config, debug):
         logger.info("Building {} packages".format(", ".join(platforms_to_build)))
 
     if platforms_to_build:
-        cmd = "renutil {} launch {} distribute \
+        cmd = "renutil {} launch {} -h distribute \
         {} --destination {}".format(
             registry_cmd,
             config["renutil"]["version"],
