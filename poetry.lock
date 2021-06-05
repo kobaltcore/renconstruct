@@ -157,7 +157,7 @@ pyflakes = ">=2.3.0,<2.4.0"
 
 [[package]]
 name = "identify"
-version = "2.2.8"
+version = "2.2.9"
 description = "File identification library for Python"
 category = "dev"
 optional = false
@@ -613,8 +613,8 @@ flake8 = [
     {file = "flake8-3.9.2.tar.gz", hash = "sha256:07528381786f2a6237b061f6e96610a4167b226cb926e2aa2b6b1d78057c576b"},
 ]
 identify = [
-    {file = "identify-2.2.8-py2.py3-none-any.whl", hash = "sha256:3a74cf41f1a0bde21e2f196a1727a608629339d9897226bad07b22e0bbde6faa"},
-    {file = "identify-2.2.8.tar.gz", hash = "sha256:7d4a73d58869a484d4ba8892793c80e30aa699e77707f26c1049486ef9be415f"},
+    {file = "identify-2.2.9-py2.py3-none-any.whl", hash = "sha256:96c57d493184daecc7299acdeef0ad7771c18a59931ea927942df393688fe849"},
+    {file = "identify-2.2.9.tar.gz", hash = "sha256:3a8493cf49cfe4b28d50865e38f942c11be07a7b0aab8e715073e17f145caacc"},
 ]
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
