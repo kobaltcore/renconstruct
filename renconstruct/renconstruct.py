@@ -6,6 +6,7 @@ import shutil
 import logging
 import inspect
 from glob import glob
+from contextlib import contextmanager
 from subprocess import run, Popen, PIPE, STDOUT
 from importlib import import_module, invalidate_caches
 
@@ -26,6 +27,23 @@ import yaml
 
 ### CLI Parsing ###
 import click
+
+
+@contextmanager
+def gha_group(title):
+    """
+    A context manager which groups all console output
+    when running on GitHub Actions CI.
+    In all other cases, this is a NOOP.
+    """
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        print(f"::group::{title}")
+        try:
+            yield
+        finally:
+            print("::endgroup::")
+    else:
+        yield
 
 
 class AliasedGroup(click.Group):
@@ -354,51 +372,57 @@ def cli(project, output, config, debug):
             shutil.copyfile(full_path, backup_path)
 
     if runnable_tasks:
-        run_tasks(config, runnable_tasks, stage="pre-build")
+        with gha_group("Pre-Build Tasks"):
+            run_tasks(config, runnable_tasks, stage="pre-build")
 
     if config["build"]["android"]:
-        logger.info("Building Android package")
-        cmd = "renutil {} launch {} -h android_build \
-        {} assembleRelease --destination {}".format(
-            registry_cmd,
-            config["renutil"]["version"],
-            config["project"],
-            config["output"],
-        )
-        proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
-        for line in proc.stdout:
-            line = str(line.strip(), "utf-8")
-            if line:
-                logger.debug(line)
+        with gha_group("Build Android"):
+            logger.info("Building Android package")
+            cmd = "renutil {} launch {} -h android_build \
+            {} assembleRelease --destination {}".format(
+                registry_cmd,
+                config["renutil"]["version"],
+                config["project"],
+                config["output"],
+            )
+            proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
+            for line in proc.stdout:
+                line = str(line.strip(), "utf-8")
+                if line:
+                    logger.debug(line)
 
     platforms_to_build = []
     if config["build"]["pc"]:
         platforms_to_build.append("pc")
     if config["build"]["mac"]:
         platforms_to_build.append("mac")
-    if len(platforms_to_build) == 1:
-        logger.info("Building {} package".format(platforms_to_build[0]))
-    elif len(platforms_to_build) > 1:
-        logger.info("Building {} packages".format(", ".join(platforms_to_build)))
 
     if platforms_to_build:
-        cmd = "renutil {} launch {} -h distribute \
-        {} --destination {}".format(
-            registry_cmd,
-            config["renutil"]["version"],
-            config["project"],
-            config["output"],
-        )
-        for package in platforms_to_build:
-            cmd += " --package {}".format(package)
-        proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
-        for line in proc.stdout:
-            line = str(line.strip(), "utf-8")
-            if line:
-                logger.debug(line)
+        with gha_group(f"Build {', '.join(platforms_to_build)}"):
+            if len(platforms_to_build) == 1:
+                logger.info("Building {} package".format(platforms_to_build[0]))
+            elif len(platforms_to_build) > 1:
+                logger.info(
+                    "Building {} packages".format(", ".join(platforms_to_build))
+                )
+            cmd = "renutil {} launch {} -h distribute \
+            {} --destination {}".format(
+                registry_cmd,
+                config["renutil"]["version"],
+                config["project"],
+                config["output"],
+            )
+            for package in platforms_to_build:
+                cmd += " --package {}".format(package)
+            proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
+            for line in proc.stdout:
+                line = str(line.strip(), "utf-8")
+                if line:
+                    logger.debug(line)
 
     if runnable_tasks:
-        run_tasks(config, runnable_tasks, stage="post-build")
+        with gha_group("Post-Build Tasks"):
+            run_tasks(config, runnable_tasks, stage="post-build")
 
 
 if __name__ == "__main__":
