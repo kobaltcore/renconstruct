@@ -1,7 +1,7 @@
 tasks:
-  set_extended_memory_limit: true
+  set_extended_memory_limit: false
   notarize: false
-  clean: true
+  clean: false
   patch: false
   overwrite_keystore: false
 
