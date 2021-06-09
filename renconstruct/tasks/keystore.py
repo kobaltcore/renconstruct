@@ -22,15 +22,13 @@ class OverwriteKeystoreTask:
 
     @staticmethod
     def validate_config(config):
-        if config.get("keystore", None) is None and not os.environ.get("RC_KEYSTORE"):
+        config["keystore"] = config.get("keystore", os.environ.get("RC_KEYSTORE"))
+        if config.get("keystore", None) is None:
             raise Exception(
                 "The overwrite_keystore task is active, but no keystore was specified. Please specify either the 'keystore' config option or the 'RC_KEYSTORE' environment variable."
             )
 
-        if config.get("keystore"):
-            config["keystore"] = base64.b64decode(config["keystore"])
-        else:
-            config["keystore"] = base64.b64decode(os.environ["RC_KEYSTORE"])
+        config["keystore"] = base64.b64decode(config["keystore"])
 
         return config
 
