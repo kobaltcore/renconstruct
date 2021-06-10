@@ -61,12 +61,16 @@ class NotarizeTask:
 
         return config
 
-    def run_cmd(self, cmd):
+    def run_cmd(self, cmd, grab_output=False):
         proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
+        output = []
         for line in proc.stdout:
             line = str(line.strip(), "utf-8")
             if line:
                 logger.debug(line)
+                if grab_output:
+                    output.append(line)
+        return output or None
 
     def post_build(self):
         logger.info("Setting up developer certificate...")
@@ -74,12 +78,15 @@ class NotarizeTask:
         with open("certificate.p12", "wb") as f:
             f.write(self.config["notarize"]["sign_cert"])
 
-        # create new keychain
-        self.run_cmd(
-            "security delete-keychain -p {} build.keychain".format(
-                self.config["notarize"]["sign_cert_pwd"]
-            )
+        # get current default keychain
+        default_keychain = self.run_cmd("security default-keychain", grab_output=True)
+        default_keychain = "{}.keychain".format(
+            os.path.splitext(os.path.basename(default_keychain[0]))[0]
         )
+
+        # create new keychain
+        self.run_cmd("security delete-keychain build.keychain")
+
         self.run_cmd(
             "security create-keychain -p {} build.keychain".format(
                 self.config["notarize"]["sign_cert_pwd"]
@@ -115,9 +122,6 @@ class NotarizeTask:
             )
         )
 
-        # remove certificate file after import
-        os.remove("certificate.p12")
-
         logger.info("Creating reNotize config file...")
         with open("renotize.yml", "w") as f:
             f.write(yaml.dump(self.config["notarize"]))
@@ -131,4 +135,7 @@ class NotarizeTask:
             if line:
                 logger.debug(line)
 
+        self.run_cmd("security default-keychain -s {}".format(default_keychain))
+
+        os.remove("certificate.p12")
         os.remove("renotize.yml")
