@@ -235,15 +235,6 @@ def validate_config(config):
     if config["renutil"].get("registry", None) is None:
         config["renutil"]["registry"] = None
 
-    if config.get("renotize", None) is None:
-        config["renotize"] = {}
-    for key in ("apple_id", "password", "identity", "bundle"):
-        if config["renotize"].get(key, None) is None:
-            logger.error("'{}' is a required key for 'renotize'!".format(key))
-            sys.exit(1)
-    if config["renotize"].get("altool_extra", None) is None:
-        config["renotize"]["altool_extra"] = ""
-
     if config.get("tasks", None) is None:
         config["tasks"] = {"path": None}
     if config["tasks"].get("path", None) is None:
