@@ -20,7 +20,7 @@ renutil:
   version: "latest"
   registry: "cache"
 
-renotize:
+notarize:
   apple_id: fill-this-in
   password: fill-this-in
   identity: fill-this-in

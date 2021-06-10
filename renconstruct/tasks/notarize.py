@@ -57,6 +57,8 @@ class NotarizeTask:
 
         config["sign_cert"] = base64.b64decode(config["sign_cert"])
 
+        config["altool_extra"] = config.get("altool_extra", None)
+
         return config
 
     def run_cmd(self, cmd):
@@ -70,28 +72,55 @@ class NotarizeTask:
         logger.info("Setting up developer certificate...")
         # write decoded file to disk
         with open("certificate.p12", "wb") as f:
-            f.write(self.config["renotize"]["sign_cert"])
+            f.write(self.config["notarize"]["sign_cert"])
 
         # create new keychain
-        self.run_cmd("security delete-keychain -p {} build.keychain".format(self.config["renotize"]["sign_cert_pwd"]))
-        self.run_cmd("security create-keychain -p {} build.keychain".format(self.config["renotize"]["sign_cert_pwd"]))
+        self.run_cmd(
+            "security delete-keychain -p {} build.keychain".format(
+                self.config["notarize"]["sign_cert_pwd"]
+            )
+        )
+        self.run_cmd(
+            "security create-keychain -p {} build.keychain".format(
+                self.config["notarize"]["sign_cert_pwd"]
+            )
+        )
 
         # set new keychain as default
         self.run_cmd("security default-keychain -s build.keychain")
 
         # unlock the keychain by default (prevents password prompt)
-        self.run_cmd("security unlock-keychain -p {} build.keychain".format(self.config["renotize"]["sign_cert_pwd"]))
+        self.run_cmd(
+            "security unlock-keychain -p {} build.keychain".format(
+                self.config["notarize"]["sign_cert_pwd"]
+            )
+        )
 
         # import the decoded certificate
-        self.run_cmd("security import certificate.p12 -k build.keychain -P {} -T /usr/bin/codesign -T /usr/bin/xcrun".format(self.config["renotize"]["sign_cert_pwd"]))
+        self.run_cmd(
+            "security import certificate.p12 -k build.keychain -P {} -T /usr/bin/codesign -T /usr/bin/xcrun".format(
+                self.config["notarize"]["sign_cert_pwd"]
+            )
+        )
 
         # add codesign and altool to ACL
-        self.run_cmd("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k {} build.keychain".format(self.config["renotize"]["sign_cert_pwd"]))
-        self.run_cmd("security set-key-partition-list -S apple-tool:,apple:,xcrun: -s -k {} build.keychain".format(self.config["renotize"]["sign_cert_pwd"]))
+        self.run_cmd(
+            "security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k {} build.keychain".format(
+                self.config["notarize"]["sign_cert_pwd"]
+            )
+        )
+        self.run_cmd(
+            "security set-key-partition-list -S apple-tool:,apple:,xcrun: -s -k {} build.keychain".format(
+                self.config["notarize"]["sign_cert_pwd"]
+            )
+        )
+
+        # remove certificate file after import
+        os.remove("certificate.p12")
 
         logger.info("Creating reNotize config file...")
         with open("renotize.yml", "w") as f:
-            f.write(yaml.dump(self.config["renotize"]))
+            f.write(yaml.dump(self.config["notarize"]))
 
         mac_zip = glob(os.path.join(self.config["output"], "*-mac.zip"))[0]
 
