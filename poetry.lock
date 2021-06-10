@@ -377,7 +377,7 @@ python-versions = "*"
 
 [[package]]
 name = "renotize"
-version = "1.5.2"
+version = "1.5.3"
 description = "A utility script for quickly and automatically notarizing Ren'Py applications for macOS."
 category = "main"
 optional = false
@@ -550,7 +550,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "85af97b02f5e9e44f95e9ecf7bbbf1b96f2a843bd62e9c53a89e8f76c4844e43"
+content-hash = "97e4fe70086ed9db2acbe35f47ea31c318a96ee4d16076bb9ab9fb7bca2e3b95"
 
 [metadata.files]
 appdirs = [
@@ -807,8 +807,8 @@ regex = [
     {file = "regex-2021.4.4.tar.gz", hash = "sha256:52ba3d3f9b942c49d7e4bc105bb28551c44065f139a65062ab7912bef10c9afb"},
 ]
 renotize = [
-    {file = "renotize-1.5.2-py3-none-any.whl", hash = "sha256:dde489527b29b70fe0e609e5447eddbe3061b29bf264a27bc8f9f78b0faaac5a"},
-    {file = "renotize-1.5.2.tar.gz", hash = "sha256:b1105f0c99660f21c1e881a3e8249d6e1a5221780dce118334459d9ea9beed5b"},
+    {file = "renotize-1.5.3-py3-none-any.whl", hash = "sha256:028fb8f04e9b207ddf79e6c393a9f6ffbfbcef2a10e9a15444309a7e3d19331c"},
+    {file = "renotize-1.5.3.tar.gz", hash = "sha256:d53d8a67a39567aaaa4fc14c4897871bc76e194a7a78809b19a578b34d1f0ea0"},
 ]
 renutil = [
     {file = "renutil-1.15.2-py3-none-any.whl", hash = "sha256:6c0f2e767894d21e33ba3551cf266b89fe53113c394e11da05db9edc6985e5a5"},
