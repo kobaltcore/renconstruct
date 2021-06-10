@@ -11,13 +11,37 @@ from subprocess import run, Popen, PIPE, STDOUT
 from importlib import import_module, invalidate_caches
 
 ### Logging ###
+from rich.text import Text
 from rich.logging import RichHandler
+
+LOG_LEVELS = {
+    logging.DEBUG: "::debug::{message}",
+    logging.WARNING: "::warning file={name},line={line}::{message}",
+    logging.ERROR: "::error file={name},line={line}::{message}",
+}
+
+
+class GHAFormatter(logging.Formatter):
+    def format(self, record):
+        level_template = LOG_LEVELS.get(record.levelno, "{message}")
+        return level_template.format(
+            name=os.path.basename(record.pathname),
+            line=record.lineno,
+            message=Text.from_markup(record.msg),
+        )
+
+
+if os.environ.get("GITHUB_ACTIONS") == "true":
+    handler = logging.StreamHandler()
+    handler.setFormatter(GHAFormatter())
+else:
+    handler = RichHandler(rich_tracebacks=True, markup=True)
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(message)s",
     datefmt="[%X]",
-    handlers=[RichHandler(rich_tracebacks=True, markup=True)],
+    handlers=[handler],
 )
 
 logger = logging.getLogger("rich")
