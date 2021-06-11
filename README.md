@@ -56,12 +56,14 @@ It consists of the following sections:
 - `version`: The version of Ren'Py to use while building the distributions
 - `registry`: A path where `renutil` data is stored. Mostly useful for CI environments
 
-#### `renotize`
+#### `notarize`
 - `apple_id`: The e-Mail address belonging to the Apple ID you want to use for signing applications.
 - `password`: An app-specific password generated through the [management portal](https://appleid.apple.com/account/manage) of your Apple ID.
 - `identity`: The identity associated with your Developer Certificate which can be found in `Keychain Access` under the category "My Certificates". It starts with `Developer ID Application:`, however it suffices to provide the 10-character code in the title of the certificate.
 - `bundle`: The internal name for your app. This is typically the reverse domain notation of your website plus your application name, i.e. `com.example.mygame`.
 - `altool_extra`: An optional string that will be passed on to all `altool` runs in all commands. Useful for selecting an organization when your Apple ID belongs to multiple, for example. Typically you will not have to touch this and you can leave it empty.
+- `sign_cert`: A base64-encoded p12 certificate that should be used for signing. This is optional if the certificate already exists in the keychain of the build system.
+- `sign_cert_pwd`: The password which was used to protect the `sign_cert`. Only required when `sign_cert` is given.
 
 ### Default Tasks
 renConstruct ships with several built-in tasks that enable project-independent functionality.
