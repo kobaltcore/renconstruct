@@ -18,8 +18,13 @@ class CleanTask:
         self.config = config
 
     def post_build(self):
+        if self.config["renutil"]["registry"]:
+            registry_cmd = "-r '{}'".format(self.config["renutil"]["registry"])
+
         run(
-            "renutil clean {}".format(self.config["renutil"]["version"]),
+            "renutil {} clean {}".format(
+                registry_cmd, self.config["renutil"]["version"]
+            ),
             capture_output=True,
             shell=True,
         )
