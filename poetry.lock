@@ -393,7 +393,7 @@ tqdm = ">=4.61.0,<5.0.0"
 
 [[package]]
 name = "renutil"
-version = "1.15.3"
+version = "1.15.4"
 description = "A toolkit for managing Ren'Py instances via the command line"
 category = "main"
 optional = false
@@ -550,7 +550,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "61e40c666373619caadac247176a62364694782777c4ebec9e84f7eed25d7a8c"
+content-hash = "1d4d77921de74c337e869f71b27d466feef4a25bb7b1305207db9303f72f7de8"
 
 [metadata.files]
 appdirs = [
@@ -811,8 +811,8 @@ renotize = [
     {file = "renotize-1.5.3.tar.gz", hash = "sha256:d53d8a67a39567aaaa4fc14c4897871bc76e194a7a78809b19a578b34d1f0ea0"},
 ]
 renutil = [
-    {file = "renutil-1.15.3-py3-none-any.whl", hash = "sha256:5c28da25d92487726607a51a4c06567a1d3f1809a856d2b4bb79e615d9c2c9db"},
-    {file = "renutil-1.15.3.tar.gz", hash = "sha256:71b6ce94659566d820eadbc5a9e7d43bca21bb6b8aa282e828213d93c8a9b522"},
+    {file = "renutil-1.15.4-py3-none-any.whl", hash = "sha256:ba99ecb29cfe263250fcda20859b0dcc4867cc62629fca583719db22ff041260"},
+    {file = "renutil-1.15.4.tar.gz", hash = "sha256:380b8f552c1b985213a4ba5b50b052d9ff265415029249bdece35a7bef7be598"},
 ]
 requests = [
     {file = "requests-2.25.1-py2.py3-none-any.whl", hash = "sha256:c210084e36a42ae6b9219e00e48287def368a26d03a048ddad7bfee44f75871e"},
