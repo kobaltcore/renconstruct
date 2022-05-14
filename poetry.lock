@@ -574,7 +574,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "b1056f9fe67574ad2cd456ade82b7383f16590fffb3a30b598770e46fc005d3b"
+content-hash = "c7d4eda73b7cb9c0bbb48e515518c416c4e44deb6c58e0db236401b71845773b"
 
 [metadata.files]
 arrow = [

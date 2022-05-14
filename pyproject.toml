@@ -21,6 +21,7 @@ renotize = "^1.5.3"
 diff-match-patch = "^20200713"
 PyYAML = "^5.4.1"
 rich = "^10.16.2"
+semantic-version = "^2.9.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
