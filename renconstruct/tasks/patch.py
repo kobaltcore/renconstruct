@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ### System ###
 import os
 from glob import glob
