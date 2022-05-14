@@ -397,7 +397,7 @@ def cli(project, output, config, debug):
             logger.info("Building Android package")
             cmd = "renutil {} launch {} -h android_build \
             {} assembleRelease --destination {}".format(
-                shlex.quote(registry_cmd),
+                registry_cmd,
                 config["renutil"]["version"],
                 shlex.quote(config["project"]),
                 shlex.quote(config["output"]),
@@ -424,7 +424,7 @@ def cli(project, output, config, debug):
                 )
             cmd = "renutil {} launch {} -h distribute \
             {} --destination {}".format(
-                shlex.quote(registry_cmd),
+                registry_cmd,
                 config["renutil"]["version"],
                 shlex.quote(config["project"]),
                 shlex.quote(config["output"]),
