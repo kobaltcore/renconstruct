@@ -395,12 +395,12 @@ def cli(project, output, config, debug):
     if config["build"]["android"]:
         with gha_group("Build Android"):
             logger.info("Building Android package")
-            cmd = "renutil {} launch {} -h android_build \
-            {} assembleRelease --destination {}".format(
+            cmd = 'renutil {} launch {} -h android_build \
+            "{}" assembleRelease --destination "{}"'.format(
                 registry_cmd,
                 config["renutil"]["version"],
-                shlex.quote(config["project"]),
-                shlex.quote(config["output"]),
+                config["project"],
+                config["output"],
             )
             proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
             for line in proc.stdout:
