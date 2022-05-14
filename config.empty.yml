@@ -12,7 +12,7 @@ overwrite_keystore:
   keystore: "<my b64-encoded keystore>"
 
 build:
-  win: true
+  pc: true
   mac: true
   android: true
 

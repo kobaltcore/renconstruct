@@ -47,7 +47,7 @@ It consists of the following sections:
 - `patch`: A value of `true` or `false` determining whether to run this task or not
 
 #### `build`
-- `win`: A value of `true` or `false` determining whether to build the Windows/Linux distribution or not
+- `pc`: A value of `true` or `false` determining whether to build the Windows/Linux distribution or not
 - `mac`: A value of `true` or `false` determining whether to build the macOS distribution or not
 - `android`: A value of `true` or `false` determining whether to build the Android distribution or not
 
