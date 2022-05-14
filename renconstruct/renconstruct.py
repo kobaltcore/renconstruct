@@ -399,16 +399,16 @@ def cli(project, output, config, debug):
         with gha_group("Build Android"):
             logger.info("Building Android package")
             if Version(config["renutil"]["version"]) >= Version("7.4.9"):
-                cmd = "renutil {} launch {} -h android_build \
-                {} --destination {}".format(
+                cmd = 'renutil {} launch {} -h android_build \
+                "{}" --destination "{}"'.format(
                     registry_cmd,
                     config["renutil"]["version"],
                     shlex.quote(config["project"]),
                     shlex.quote(config["output"]),
                 )
             else:
-                cmd = "renutil {} launch {} -h android_build \
-                {} assembleRelease --destination {}".format(
+                cmd = 'renutil {} launch {} -h android_build \
+                "{}" assembleRelease --destination "{}"'.format(
                     registry_cmd,
                     config["renutil"]["version"],
                     shlex.quote(config["project"]),
@@ -434,13 +434,12 @@ def cli(project, output, config, debug):
                 logger.info(
                     "Building {} packages".format(", ".join(platforms_to_build))
                 )
-            cmd = "renutil {} launch {} -h distribute \
-            {} --destination {}".format(
+            cmd = 'renutil {} launch "{}" -h distribute "{}" --destination "{}"'.format(
                 registry_cmd,
                 config["renutil"]["version"],
-                shlex.quote(config["project"]),
-                shlex.quote(config["output"]),
-            )
+                config["project"],
+                config["output"])
+            logger.debug(cmd)
             for package in platforms_to_build:
                 cmd += " --package {}".format(package)
             proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
