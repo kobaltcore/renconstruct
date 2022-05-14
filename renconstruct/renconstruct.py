@@ -422,9 +422,11 @@ def cli(project, output, config, debug):
                 logger.info(
                     "Building {} packages".format(", ".join(platforms_to_build))
                 )
-            cmd = f'renutil {registry_cmd} launch "{config["renutil"]["version"]}" -h \
-             distribute "{config["project"]}" \
-             --destination "{config["output"]}"'
+            cmd = 'renutil {} launch "{}" -h distribute "{}" --destination "{}"'.format(
+                registry_cmd,
+                config["renutil"]["version"],
+                config["project"],
+                config["output"])
             logger.debug(cmd)
             for package in platforms_to_build:
                 cmd += " --package {}".format(package)
