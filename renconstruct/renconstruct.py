@@ -3,6 +3,7 @@
 import os
 import re
 import sys
+import shlex
 import shutil
 import logging
 import inspect
@@ -327,7 +328,7 @@ def cli(project, output, config, debug):
 
     registry_cmd = ""
     if config["renutil"]["registry"]:
-        registry_cmd = "-r '{}'".format(config["renutil"]["registry"])
+        registry_cmd = "-r {}".format(shlex.quote(config["renutil"]["registry"]))
 
     logger.info("Checking available Ren'Py versions")
     p = run("renutil {} list".format(registry_cmd), capture_output=True, shell=True)
@@ -396,10 +397,10 @@ def cli(project, output, config, debug):
             logger.info("Building Android package")
             cmd = "renutil {} launch {} -h android_build \
             {} assembleRelease --destination {}".format(
-                registry_cmd,
+                shlex.quote(registry_cmd),
                 config["renutil"]["version"],
-                config["project"],
-                config["output"],
+                shlex.quote(config["project"]),
+                shlex.quote(config["output"]),
             )
             proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
             for line in proc.stdout:
@@ -423,10 +424,10 @@ def cli(project, output, config, debug):
                 )
             cmd = "renutil {} launch {} -h distribute \
             {} --destination {}".format(
-                registry_cmd,
+                shlex.quote(registry_cmd),
                 config["renutil"]["version"],
-                config["project"],
-                config["output"],
+                shlex.quote(config["project"]),
+                shlex.quote(config["output"]),
             )
             for package in platforms_to_build:
                 cmd += " --package {}".format(package)
