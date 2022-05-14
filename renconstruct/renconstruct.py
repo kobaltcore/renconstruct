@@ -12,6 +12,9 @@ from contextlib import contextmanager
 from subprocess import run, Popen, PIPE, STDOUT
 from importlib import import_module, invalidate_caches
 
+### Versioning ###
+from semantic_version import Version
+
 ### Logging ###
 from rich.text import Text
 from rich.logging import RichHandler
@@ -395,13 +398,22 @@ def cli(project, output, config, debug):
     if config["build"]["android"]:
         with gha_group("Build Android"):
             logger.info("Building Android package")
-            cmd = 'renutil {} launch {} -h android_build \
-            "{}" assembleRelease --destination "{}"'.format(
-                registry_cmd,
-                config["renutil"]["version"],
-                config["project"],
-                config["output"],
-            )
+            if Version(config["renutil"]["version"]) >= Version("7.4.9"):
+                cmd = 'renutil {} launch {} -h android_build \
+                "{}" --destination "{}"'.format(
+                    registry_cmd,
+                    config["renutil"]["version"],
+                    shlex.quote(config["project"]),
+                    shlex.quote(config["output"]),
+                )
+            else:
+                cmd = 'renutil {} launch {} -h android_build \
+                "{}" assembleRelease --destination "{}"'.format(
+                    registry_cmd,
+                    config["renutil"]["version"],
+                    shlex.quote(config["project"]),
+                    shlex.quote(config["output"]),
+                )
             proc = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
             for line in proc.stdout:
                 line = str(line.strip(), "utf-8")
