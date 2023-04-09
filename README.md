@@ -2,6 +2,13 @@
 [![CircleCI](https://circleci.com/gh/kobaltcore/renconstruct.svg?style=svg)](https://circleci.com/gh/kobaltcore/renconstruct)
 [![Downloads](https://pepy.tech/badge/renconstruct)](https://pepy.tech/project/renconstruct)
 
+> <picture>
+>   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Mqxx/GitHub-Markdown/main/blockquotes/badge/light-theme/warning.svg">
+>   <img alt="Warning" src="https://raw.githubusercontent.com/Mqxx/GitHub-Markdown/main/blockquotes/badge/dark-theme/warning.svg">
+> </picture><br>
+>
+> `renconstruct` is no longer under active development. Focus has instead shifted to the new iteration of this project, [renkit](https://github.com/kobaltcore/renkit). It builds off of the lessons learned from `renconstruct` and aims to be a more robust and feature-rich solution. `renconstruct` will slowly be phased out in favor of `renkit`, but will remain available for the foreseeable future, though no further updates are planned.
+
 A utility script to automatically build Ren'Py applications for multiple platforms.
 
 renConstruct can build distributions for Windows, Linux, macOS and Android, including extra processing steps pre- and post-build.
